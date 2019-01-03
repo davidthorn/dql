@@ -14,12 +14,24 @@ export type BodyDQLEndpointProperty = {
 
 export class BodyDQL {
 
+    /**
+     *
+     *
+     * @type {{ [id: string]: BodyDQLEndpoint }}
+     * @memberof BodyDQL
+     */
     data: { [id: string]: BodyDQLEndpoint }
 
     constructor() {
         this.data = {}
     }
 
+    /**
+     *
+     *
+     * @returns {{ [id: string]: any }}
+     * @memberof BodyDQL
+     */
     loadFile(): { [id: string]: any } {
         this.data = {
             "/app": {
@@ -34,6 +46,13 @@ export class BodyDQL {
         return this.data
     }
 
+    /**
+     *
+     *
+     * @param {string} key
+     * @returns {BodyDQLEndpoint}
+     * @memberof BodyDQL
+     */
     getEndpoint(key: string): BodyDQLEndpoint {
         if (this.data[key] === undefined) {
             throw new Error(`endpoint with key ${key} does not exist`)
@@ -42,10 +61,25 @@ export class BodyDQL {
         return this.data[key]
     }
 
+    /**
+     *
+     *
+     * @param {BodyDQLEndpoint} endpoint
+     * @returns {BodyDQLEndpointProperty[]}
+     * @memberof BodyDQL
+     */
     getEndpointProperties(endpoint: BodyDQLEndpoint): BodyDQLEndpointProperty[] {
         return Object.keys(endpoint.body).map(k => { return endpoint.body[k] })
     }
 
+    /**
+     *
+     *
+     * @param {BodyDQLEndpoint} endPoint
+     * @param {string} propname
+     * @returns {BodyDQLEndpointProperty}
+     * @memberof BodyDQL
+     */
     getEndpointProperty(endPoint: BodyDQLEndpoint, propname: string): BodyDQLEndpointProperty {
 
         if (endPoint.body[propname] === undefined) {
@@ -107,6 +141,13 @@ export class BodyDQL {
         return this.data[endpoint] !== undefined && this.data[endpoint].body[key] !== undefined
     }
 
+    /**
+     *
+     *
+     * @param {{ originalPath: string, body: any }} request
+     * @returns {Error[]}
+     * @memberof BodyDQL
+     */
     validate(request: { originalPath: string, body: any }): Error[] {
 
         const startErrors: Error[] = []
@@ -130,6 +171,13 @@ export class BodyDQL {
 
     }
 
+    /**
+     * 
+     *
+     * @param {({ property: BodyDQLEndpointProperty, value: any | undefined | null })} data
+     * @returns {Error[]}
+     * @memberof BodyDQL
+     */
     validateProperty(data: { property: BodyDQLEndpointProperty, value: any | undefined | null }): Error[] {
 
         const { property , value  } = data
