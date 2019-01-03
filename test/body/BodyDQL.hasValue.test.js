@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-const body_1 = require("../../src/body");
+const BodyDQL_1 = require("../../src/body/BodyDQL");
 const chai_1 = require("chai");
-let BodyDQLUnitTest = class BodyDQLUnitTest extends body_1.BodyDQL {
+let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
     "validates has Value return true and false for all various values"() {
         chai_1.expect(this.hasValue(1)).true;
         chai_1.expect(this.hasValue('')).false;

@@ -5,9 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_isboolean_1 = __importDefault(require("lodash.isboolean"));
 const lodash_isnumber_1 = __importDefault(require("lodash.isnumber"));
+const lodash_isstring_1 = __importDefault(require("lodash.isstring"));
 class BodyDQL {
     constructor() {
         this.data = {};
+    }
+    add(name, endpoint) {
+        this.data[name] = endpoint;
+    }
+    getEndpoints() {
+        return Object.keys(this.data).map(key => {
+            return {
+                path: key,
+                endpoint: this.getEndpoint(key)
+            };
+        });
     }
     /**
      *
@@ -126,7 +138,7 @@ class BodyDQL {
         })
             .reduce((r, f) => { return r.concat(this.validateProperty(f)); }, startErrors);
         if (errors.length > 0) {
-            throw new Error('Bad Request');
+            //throw new Error('Bad Request')
         }
         return errors;
     }
@@ -176,6 +188,11 @@ class BodyDQL {
             case 'number':
                 if (!lodash_isnumber_1.default(value)) {
                     errors.push(new Error('value is not a number'));
+                }
+                break;
+            case 'string':
+                if (!lodash_isstring_1.default(value)) {
+                    errors.push(new Error('value is not a string'));
                 }
                 break;
             default: break;
@@ -253,4 +270,4 @@ class BodyDQL {
     }
 }
 exports.BodyDQL = BodyDQL;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=BodyDQL.js.map

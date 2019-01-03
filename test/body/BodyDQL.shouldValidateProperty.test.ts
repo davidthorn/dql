@@ -1,5 +1,5 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body";
+import { BodyDQL } from "../../src/body/BodyDQL";
 import { expect } from 'chai'
 
 @suite('BodyDQLUnitTest - shouldValidateProperty')

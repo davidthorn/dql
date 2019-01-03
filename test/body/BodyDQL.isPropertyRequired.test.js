@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-const body_1 = require("../../src/body");
+const BodyDQL_1 = require("../../src/body/BodyDQL");
 const chai_1 = require("chai");
-let BodyDQLUnitTest = class BodyDQLUnitTest extends body_1.BodyDQL {
+let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
     "validates if a property is required to be validated"() {
         this.data = {
             "/app": {

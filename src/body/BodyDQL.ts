@@ -1,16 +1,8 @@
 import isboolean from 'lodash.isboolean'
 import isnumber from 'lodash.isnumber'
-
-export type BodyDQLEndpoint = {
-    body: { [id: string]: BodyDQLEndpointProperty }
-}
-
-export type BodyDQLEndpointProperty = {
-    name?: string
-    type: any
-    required?: boolean
-    errors?: { [id: string]: string[] }
-}
+import isstring from 'lodash.isstring'
+import { BodyDQLEndpointProperty } from './BodyDQLEndpointProperty';
+import { BodyDQLEndpoint } from './BodyDQLEndpoint';
 
 export class BodyDQL {
 
@@ -24,6 +16,19 @@ export class BodyDQL {
 
     constructor() {
         this.data = {}
+    }
+
+    add(name: string, endpoint: BodyDQLEndpoint) {
+        this.data[name] = endpoint
+    }
+
+    getEndpoints(): { path: string, endpoint: BodyDQLEndpoint }[] {
+        return Object.keys(this.data).map(key => {
+            return {
+                path: key,
+                endpoint: this.getEndpoint(key)
+            }
+        })
     }
 
     /**
@@ -155,16 +160,16 @@ export class BodyDQL {
         const endpoint = this.getEndpoint(request.originalPath)
 
         const errors: Error[] = Object.keys(endpoint.body)
-        .map( key => {
-            return {
-                property: this.getEndpointProperty(endpoint, key),
-                value: request.body[key]
-            }
-        })
-        .reduce((r, f) => { return r.concat(this.validateProperty(f)) }, startErrors)
-       
+            .map(key => {
+                return {
+                    property: this.getEndpointProperty(endpoint, key),
+                    value: request.body[key]
+                }
+            })
+            .reduce((r, f) => { return r.concat(this.validateProperty(f)) }, startErrors)
+
         if (errors.length > 0) {
-            throw new Error('Bad Request')
+            //throw new Error('Bad Request')
         }
 
         return errors
@@ -180,22 +185,22 @@ export class BodyDQL {
      */
     validateProperty(data: { property: BodyDQLEndpointProperty, value: any | undefined | null }): Error[] {
 
-        const { property , value  } = data
+        const { property, value } = data
 
         let errors: Error[] = []
 
         const required = this.isPropertyRequired(property)
 
-        if(!required && !this.hasValue(value)) {
+        if (!required && !this.hasValue(value)) {
             return []
         }
 
-        if (!this.shouldValidateProperty(property , value)) {
+        if (!this.shouldValidateProperty(property, value)) {
             return []
         }
 
         if (value === undefined) {
-            const requiredErrors = this.getErrorsForProperty('required' , property) 
+            const requiredErrors = this.getErrorsForProperty('required', property)
             const requiredError = new Error(`property ${property.name!} does not exist`)
             errors = errors.concat(requiredErrors.length > 0 ? requiredErrors : [requiredError])
         }
@@ -230,10 +235,15 @@ export class BodyDQL {
                     errors.push(new Error('value is not a number'))
                 }
                 break;
+            case 'string':
+                if (!isstring(value)) {
+                    errors.push(new Error('value is not a string'))
+                }
+                break;
             default: break
         }
 
-        if(errors.length === 0) {
+        if (errors.length === 0) {
             return []
         }
 
@@ -241,7 +251,7 @@ export class BodyDQL {
         switch (customeErrors.length > 0) {
             case true:
                 return customeErrors
-            default: 
+            default:
                 return errors
         }
     }
@@ -256,13 +266,13 @@ export class BodyDQL {
      */
     hasValue(value: any | undefined | null): boolean {
         const result = value !== undefined && value !== null
-        if(result === true && typeof value === 'string') {
+        if (result === true && typeof value === 'string') {
             return value.length > 0
         }
 
         return result
     }
-   
+
     /**
      * Returns true if the required property is defined and is true
      * Returns false if required property is undefined or null or is false
@@ -272,9 +282,9 @@ export class BodyDQL {
      * @memberof BodyDQL
      */
     isPropertyRequired(property: BodyDQLEndpointProperty): boolean {
-        return property.required === undefined ? false: property.required! 
+        return property.required === undefined ? false : property.required!
     }
-    
+
     /**
      * Returns true if value is not undefined or null and required property is not undefined or null and is true
      * Returns false if required property is undefined or null
@@ -286,10 +296,10 @@ export class BodyDQL {
      */
     shouldValidateProperty(property: BodyDQLEndpointProperty, value: any | undefined | null): boolean {
         // let errors: Error[] = []
-        switch(this.hasValue(value)) {
+        switch (this.hasValue(value)) {
             case true: return true
             case false:
-            return this.hasValue(property.required) ? property.required! : false
+                return this.hasValue(property.required) ? property.required! : false
         }
     }
 
