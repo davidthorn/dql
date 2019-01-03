@@ -52,7 +52,9 @@ export class BodyDQL {
             throw new Error(`endpoint property with key ${propname} does not exist`)
         }
 
-        return endPoint.body[propname]
+        const prop = endPoint.body[propname]
+        prop.name = propname
+        return prop
     }
 
     /**
@@ -107,41 +109,52 @@ export class BodyDQL {
 
     validate(request: { originalPath: string, body: any }): Error[] {
 
-        let errors: Error[] = []
+        const startErrors: Error[] = []
 
         const endpoint = this.getEndpoint(request.originalPath)
 
-        Object.keys(endpoint.body).forEach(key => {
-
-            const prop = this.getEndpointProperty(endpoint, key)
-            prop.name = key /// set the name for other functions to use
-            const value = request.body[key]
-            
-            const required = this.isPropertyRequired(prop)
-
-            if(!required && !this.hasValue(value)) {
-                return
+        const errors: Error[] = Object.keys(endpoint.body)
+        .map( key => {
+            return {
+                property: this.getEndpointProperty(endpoint, key),
+                value: request.body[key]
             }
-
-            if (!this.shouldValidateProperty(prop , value)) {
-                return 
-            }
-
-            if (value === undefined) {
-                const requiredErrors = this.getErrorsForProperty('required' , prop) 
-                const requiredError = new Error(`property ${key} does not exist on endpoint ${request.originalPath}`)
-                errors = errors.concat(requiredErrors.length > 0 ? requiredErrors : [requiredError])
-            }
-
-            /// if the value exists then it should be type checked regardless
-            let validatedErrors = this.validateEndpointTypesMatch(prop, value)
-            errors = errors.concat(validatedErrors)
-
         })
-
+        .reduce((r, f) => { return r.concat(this.validateProperty(f)) }, startErrors)
+       
         if (errors.length > 0) {
             throw new Error('Bad Request')
         }
+
+        return errors
+
+    }
+
+    validateProperty(data: { property: BodyDQLEndpointProperty, value: any | undefined | null }): Error[] {
+
+        const { property , value  } = data
+
+        let errors: Error[] = []
+
+        const required = this.isPropertyRequired(property)
+
+        if(!required && !this.hasValue(value)) {
+            return []
+        }
+
+        if (!this.shouldValidateProperty(property , value)) {
+            return []
+        }
+
+        if (value === undefined) {
+            const requiredErrors = this.getErrorsForProperty('required' , property) 
+            const requiredError = new Error(`property ${property.name!} does not exist`)
+            errors = errors.concat(requiredErrors.length > 0 ? requiredErrors : [requiredError])
+        }
+
+        /// if the value exists then it should be type checked regardless
+        let validatedErrors = this.validateEndpointTypesMatch(property, value)
+        errors = errors.concat(validatedErrors)
 
         return errors
 
