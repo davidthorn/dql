@@ -1,0 +1,37 @@
+{
+  "name": "dql",
+  "version": "1.0.0",
+  "description": "A library which parses and validates the body of a http reqeuest to match specific criteria and more.",
+  "main": "src/main.ts",
+  "scripts": {
+    "pretest": "tsc",
+    "test": "nyc mocha",
+    "watch": "mocha-typescript-watch",
+    "prepare": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidthorn/dql.git"
+  },
+  "author": "David Thorn <david.thorn221278@googlemail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidthorn/dql/issues"
+  },
+  "homepage": "https://github.com/davidthorn/dql#readme",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/lodash": "^4.14.119",
+    "@types/lodash.isboolean": "^3.0.4",
+    "@types/lodash.isnumber": "^3.0.4",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "lodash.isboolean": "^3.0.3",
+    "lodash.isnumber": "^3.0.3",
+    "mocha": "^5.2.0",
+    "mocha-typescript": "^1.1.17",
+    "nyc": "^13.1.0",
+    "source-map-support": "^0.5.9",
+    "typescript": "^3.2.2"
+  }
+}
