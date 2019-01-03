@@ -122,8 +122,28 @@ class BodyDQL {
                 break;
             default: break;
         }
-        return errors;
+        if (errors.length === 0) {
+            return [];
+        }
+        const customeErrors = this.getErrorsForProperty('type', property);
+        switch (customeErrors.length > 0) {
+            case true:
+                return customeErrors;
+            default:
+                return errors;
+        }
     }
+    /**
+     * Returns custom errors for this property and which errors key is relates to
+     * so the prop defines which body property it is on the propertyKey defined attribute which it is testing
+     * for example if it is testing the type then the property key would be type.
+     * If none exists then the default error will be used
+     *
+     * @param {string} propertyKey
+     * @param {BodyDQLEndpointProperty} prop
+     * @returns {Error[]}
+     * @memberof BodyDQL
+     */
     getErrorsForProperty(propertyKey, prop) {
         if (prop.errors !== undefined && prop.errors[propertyKey] !== undefined) {
             return prop.errors[propertyKey].map(error => { return new Error(error); });

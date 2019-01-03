@@ -2,5 +2,7 @@
     "files.exclude": {
         "**/*.js.map": true,
         "**/*.jsa": true
-    }
+    },
+    "editor.fontSize": 12,
+    "files.autoSave": "onWindowChange"
 }

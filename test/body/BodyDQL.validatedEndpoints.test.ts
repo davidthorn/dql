@@ -86,8 +86,6 @@ export class BodyDQLUnitTest extends BodyDQL {
                 body : {
                     "my-property" : {
                         type: "string"
-                       
-                        
                     }
                 }
             }
