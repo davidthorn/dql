@@ -6,6 +6,7 @@ export type BodyDQLEndpoint = {
 }
 
 export type BodyDQLEndpointProperty = {
+    name?: string
     type: any
     required?: boolean
     errors?: { [id: string]: string[] }
@@ -82,6 +83,7 @@ export class BodyDQL {
                 }
 
                 const property = endPointData.body[prop]
+                property.name = prop /// set the name for other functions to use
 
                 if (property.required !== undefined || isboolean(property.required)) {
                     throw new Error(`the property ${prop}'s 'required' value must either be true or false. boolean required`)
@@ -112,17 +114,23 @@ export class BodyDQL {
         Object.keys(endpoint.body).forEach(key => {
 
             const prop = this.getEndpointProperty(endpoint, key)
-
-            const required = prop.required === undefined ? false : prop.required!
+            prop.name = key /// set the name for other functions to use
             const value = request.body[key]
+            
+            const required = this.isPropertyRequired(prop)
 
-            if (value === undefined && required === true) {
-                errors.push(new Error(`property ${key} does not exist on endpoint ${request.originalPath}`))
+            if(!required && !this.hasValue(value)) {
+                return
             }
 
-            /// if the value is not required then ignore it
+            if (!this.shouldValidateProperty(prop , value)) {
+                return 
+            }
+
             if (value === undefined) {
-                return
+                const requiredErrors = this.getErrorsForProperty('required' , prop) 
+                const requiredError = new Error(`property ${key} does not exist on endpoint ${request.originalPath}`)
+                errors = errors.concat(requiredErrors.length > 0 ? requiredErrors : [requiredError])
             }
 
             /// if the value exists then it should be type checked regardless
@@ -174,6 +182,53 @@ export class BodyDQL {
                 return customeErrors
             default: 
                 return errors
+        }
+    }
+
+    /**
+     * Returns true if the value is not undefined or null
+     * and if a string it has more then 0 chars
+     *
+     * @param {(any | undefined | null)} value
+     * @returns {boolean}
+     * @memberof BodyDQL
+     */
+    hasValue(value: any | undefined | null): boolean {
+        const result = value !== undefined && value !== null
+        if(result === true && typeof value === 'string') {
+            return value.length > 0
+        }
+
+        return result
+    }
+   
+    /**
+     * Returns true if the required property is defined and is true
+     * Returns false if required property is undefined or null or is false
+     *
+     * @param {BodyDQLEndpointProperty} property
+     * @returns {boolean}
+     * @memberof BodyDQL
+     */
+    isPropertyRequired(property: BodyDQLEndpointProperty): boolean {
+        return property.required === undefined ? false: property.required! 
+    }
+    
+    /**
+     * Returns true if value is not undefined or null and required property is not undefined or null and is true
+     * Returns false if required property is undefined or null
+     *
+     * @param {BodyDQLEndpointProperty} property
+     * @param {(any | undefined | null)} value
+     * @returns {boolean}
+     * @memberof BodyDQL
+     */
+    shouldValidateProperty(property: BodyDQLEndpointProperty, value: any | undefined | null): boolean {
+        // let errors: Error[] = []
+        switch(this.hasValue(value)) {
+            case true: return true
+            case false:
+            return this.hasValue(property.required) ? property.required! : false
         }
     }
 
