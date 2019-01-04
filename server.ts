@@ -1,10 +1,11 @@
 import application from './app'
 import DQL from './src/DQL'
+import personEndpoint from './mockServer'
 
 const server = new DQL()
 
 server.add(application.path , application.endpoint)
-
+server.add(personEndpoint.path , personEndpoint.endpoint)
 
 server.add('/app' , {
     body: {

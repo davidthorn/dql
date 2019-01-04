@@ -40,6 +40,9 @@ class DQL {
                 const endpoint = this.endpoints.getEndpoint(req.originalUrl);
                 if (endpoint.middleware === undefined)
                     throw new Error();
+                if (req.method !== endpoint.method)
+                    throw new Error();
+                endpoint.middleware(req, res, next);
             }
             catch (error) {
                 res.status(404).send({
@@ -54,6 +57,9 @@ class DQL {
         this.handle404();
         this.endpoints.getEndpoints().forEach(data => {
             const defaultMw = (req, res, next) => {
+                if (req.method !== data.endpoint.method) {
+                    return next();
+                }
                 const body = req.headers["content-type"] === "application/json" ? req.body : req.body;
                 try {
                     const errors = this.endpoints.validate({

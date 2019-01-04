@@ -5,8 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const DQL_1 = __importDefault(require("./src/DQL"));
+const mockServer_1 = __importDefault(require("./mockServer"));
 const server = new DQL_1.default();
 server.add(app_1.default.path, app_1.default.endpoint);
+server.add(mockServer_1.default.path, mockServer_1.default.endpoint);
 server.add('/app', {
     body: {
         name: {

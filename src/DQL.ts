@@ -51,11 +51,13 @@ export class DQL {
             try {
                 const endpoint = this.endpoints.getEndpoint(req.originalUrl)
                 if(endpoint.middleware === undefined) throw new Error()
+                if(req.method !== endpoint.method) throw new Error()
+                endpoint.middleware(req, res, next)
             } catch(error) {
                 res.status(404).send({
                     statusCode: 404,
                     message: 'Not Found',
-                    path: req.originalUrl  
+                    path: req.originalUrl   
                 })
             }
         })
@@ -69,6 +71,11 @@ export class DQL {
 
             const defaultMw = (req: Request, res: Response, next: () => any) => {
  
+
+                if(req.method !== data.endpoint.method) {
+                    return next()
+                }
+
                 const body = req.headers["content-type"] === "application/json" ?req.body : req.body
                
                 try { 
