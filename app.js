@@ -6,7 +6,8 @@ const endpoint = {
         res.status(200).send({
             message: 'it homes'
         });
-    }
+    },
+    method: 'POST'
 };
 exports.default = {
     path: '/home',

@@ -31,13 +31,17 @@ export class BodyDQL {
         })
     }
 
+    hasEndpoint(path: string): boolean {
+        return this.getEndpoints().filter(i => { return (i.path === path) ? i : undefined }).length > 0
+    }
+
     /**
      *
      *
      * @returns {{ [id: string]: any }}
      * @memberof BodyDQL
      */
-    loadFile(): { [id: string]: any } {
+    loadFile(): { [id: string]: any } { 
         this.data = {
             "/app": {
                 body: {
@@ -213,6 +217,14 @@ export class BodyDQL {
 
     }
 
+    catchParse(value: any , p: (v: any) => any): any {
+        try {
+            return p(value)
+        }catch(error) {
+            return value
+        }
+    }
+
     /**
      * validates that the value provided has the matching type
      *
@@ -223,22 +235,30 @@ export class BodyDQL {
      */
     validateEndpointTypesMatch(property: BodyDQLEndpointProperty, value: any): Error[] {
         let errors: Error[] = []
+       
+        const parse = property.parse === undefined ? (i: any) => { return i } : property.parse! 
+
+        const parsedValue = this.catchParse(value , parse)
 
         switch (property.type) {
             case 'boolean':
-                if (!isboolean(value)) {
+                if (!isboolean(parsedValue)) {
                     errors.push(new Error('value is not boolean'))
                 }
                 break;
             case 'number':
-                if (!isnumber(value)) {
+                if (!isnumber(parsedValue)) {
                     errors.push(new Error('value is not a number'))
                 }
-                break;
+                break; 
             case 'string':
-                if (!isstring(value)) {
+                
+                if (isboolean(parsedValue)) {
+                    errors.push(new Error('value is boolean and not a string'))
+                } 
+                if (!isstring(parsedValue)) {
                     errors.push(new Error('value is not a string'))
-                }
+                }   
                 break;
             default: break
         }

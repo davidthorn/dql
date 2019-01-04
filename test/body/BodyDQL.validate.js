@@ -27,7 +27,7 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 "not-name": "test",
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.greaterThan(0);
     }
     "validate does not throw an error when name property does not exist and required is true"() {
         this.data = {
@@ -46,7 +46,8 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 "name": "test",
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.not.throw();
+        //expect(() => { this.validate(request) }).to.not.throw()
+        chai_1.expect(this.validate(request).length).to.be.equal(0);
     }
     "validate throws an error when the type is boolean and value is not a classified boolean primitive"() {
         this.data = {
@@ -65,14 +66,14 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 "name": "true",
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.greaterThan(0);
         const request1 = {
             originalPath: '/app',
             body: {
                 "name": "false",
             }
         };
-        chai_1.expect(() => { this.validate(request1); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.greaterThan(0);
     }
     "validate throws an error when the type is number and value is not a classified number primitive"() {
         this.data = {
@@ -91,14 +92,14 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 "name": "1",
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.greaterThan(0);
         const request1 = {
             originalPath: '/app',
             body: {
                 "name": 1,
             }
         };
-        chai_1.expect(() => { this.validate(request1); }).to.not.throw();
+        chai_1.expect(this.validate(request1).length).to.be.equal(0);
     }
     "validate throws an error when the properties value type does not match the endpoints property type"() {
         this.data = {
@@ -117,7 +118,7 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 "name": "true",
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.greaterThan(0);
     }
     "properties in body which are not in defined in BodyQLEndpoint or ignored"() {
         this.data = {
@@ -137,7 +138,7 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 name: true
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.not.throw();
+        chai_1.expect(this.validate(request).length).to.be.equal(0);
     }
     "the properties value is validated even if it is not required"() {
         this.data = {
@@ -156,7 +157,7 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 isOld: false
             }
         };
-        chai_1.expect(() => { this.validate(request); }).to.not.throw();
+        chai_1.expect(this.validate(request).length).to.be.equal(0);
         this.data = {
             "/app": {
                 body: {
@@ -173,7 +174,7 @@ let BodyDQLUnitTest = class BodyDQLUnitTest extends BodyDQL_1.BodyDQL {
                 isOld: "no"
             }
         };
-        chai_1.expect(() => { this.validate(request1); }).to.throw();
+        chai_1.expect(this.validate(request).length).to.be.equal(0);
     }
 };
 __decorate([

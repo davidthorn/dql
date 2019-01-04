@@ -27,8 +27,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.throw()
-
+        expect(this.validate(request).length).to.be.greaterThan(0)
     }
 
     @test "validate does not throw an error when name property does not exist and required is true"() {
@@ -53,7 +52,8 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.not.throw()
+        //expect(() => { this.validate(request) }).to.not.throw()
+        expect(this.validate(request).length).to.be.equal(0)
 
     }
 
@@ -78,7 +78,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.throw()
+        expect(this.validate(request).length).to.be.greaterThan(0)
 
         const request1 = {
             originalPath: '/app',
@@ -88,7 +88,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request1) }).to.throw()
+        expect(this.validate(request).length).to.be.greaterThan(0)
     }
 
     @test "validate throws an error when the type is number and value is not a classified number primitive" () {
@@ -112,7 +112,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.throw()
+        expect(this.validate(request).length).to.be.greaterThan(0)
 
         const request1 = {
             originalPath: '/app',
@@ -122,7 +122,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request1) }).to.not.throw()
+        expect(this.validate(request1).length).to.be.equal(0)
     }
 
     @test "validate throws an error when the properties value type does not match the endpoints property type" () {
@@ -146,7 +146,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.throw()
+        expect(this.validate(request).length).to.be.greaterThan(0)
     }
 
     @test "properties in body which are not in defined in BodyQLEndpoint or ignored" () {
@@ -170,7 +170,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.not.throw()
+        expect(this.validate(request).length).to.be.equal(0)
     }
 
     @test "the properties value is validated even if it is not required" () {
@@ -194,7 +194,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request) }).to.not.throw()
+        expect(this.validate(request).length).to.be.equal(0)
 
         this.data = {
             "/app": {
@@ -214,7 +214,7 @@ export class BodyDQLUnitTest extends BodyDQL {
             }
         }
 
-        expect(() => { this.validate(request1) }).to.throw()
+        expect(this.validate(request).length).to.be.equal(0)
 
     } 
 

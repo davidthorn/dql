@@ -28,4 +28,6 @@ export type BodyDQLEndpointProperty = {
     * @type {{ [id: string]: string[]; }}
     */
    errors?: { [id: string]: string[]; };
+
+   parse?: (value: any) => any
 };

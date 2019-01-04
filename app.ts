@@ -8,7 +8,8 @@ const endpoint: BodyDQLEndpoint = {
         res.status(200).send({
             message: 'it homes'
         })
-    }
+    },
+    method: 'POST'
 }
 
 export default {

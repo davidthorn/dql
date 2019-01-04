@@ -14,13 +14,20 @@ server.add('/app', {
             required: true,
             errors: {
                 type: ["You are an idiot"]
-            }
+            },
+            parse: JSON.parse
         },
         surname: {
             type: 'boolean'
+        },
+        isOld: {
+            type: 'boolean'
+        },
+        age: {
+            type: 'number'
         }
     },
-    method: 'GET',
+    method: 'POST',
     middleware: (req, res) => {
         res.status(200).send({
             mesage: 'mother fucker /app',

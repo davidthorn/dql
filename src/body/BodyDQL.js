@@ -21,6 +21,9 @@ class BodyDQL {
             };
         });
     }
+    hasEndpoint(path) {
+        return this.getEndpoints().filter(i => { return (i.path === path) ? i : undefined; }).length > 0;
+    }
     /**
      *
      *
@@ -169,6 +172,14 @@ class BodyDQL {
         errors = errors.concat(validatedErrors);
         return errors;
     }
+    catchParse(value, p) {
+        try {
+            return p(value);
+        }
+        catch (error) {
+            return value;
+        }
+    }
     /**
      * validates that the value provided has the matching type
      *
@@ -179,19 +190,24 @@ class BodyDQL {
      */
     validateEndpointTypesMatch(property, value) {
         let errors = [];
+        const parse = property.parse === undefined ? (i) => { return i; } : property.parse;
+        const parsedValue = this.catchParse(value, parse);
         switch (property.type) {
             case 'boolean':
-                if (!lodash_isboolean_1.default(value)) {
+                if (!lodash_isboolean_1.default(parsedValue)) {
                     errors.push(new Error('value is not boolean'));
                 }
                 break;
             case 'number':
-                if (!lodash_isnumber_1.default(value)) {
+                if (!lodash_isnumber_1.default(parsedValue)) {
                     errors.push(new Error('value is not a number'));
                 }
                 break;
             case 'string':
-                if (!lodash_isstring_1.default(value)) {
+                if (lodash_isboolean_1.default(parsedValue)) {
+                    errors.push(new Error('value is boolean and not a string'));
+                }
+                if (!lodash_isstring_1.default(parsedValue)) {
                     errors.push(new Error('value is not a string'));
                 }
                 break;
