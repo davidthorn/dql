@@ -90,7 +90,7 @@ export class HomeEndpointUnitTest {
         })
         .end((error, res) => {
             expect(res.status).to.be.equal(405)
-        })
+        }) 
 
     }
 

@@ -111,6 +111,7 @@ export class DQLServer {
                 path: request.originalUrl,
                 method: request.method
             }) 
+            return
         }
 
         switch(handled) {
@@ -157,7 +158,7 @@ export class DQLServer {
                 res.status(404).send({
                     statusCode: 404,
                     message: 'Not Found',
-                    path: req.originalUrl   
+                    path: req.originalUrl 
                 })
             }
         })
@@ -170,6 +171,10 @@ export class DQLServer {
      * @memberof DQLServer
      */
     listen() {
+        this.server.use(this.handleNotFound.bind(this))
+        this.server.use(this.handleMethodNotAllowed.bind(this))
+        this.server.use(bodyParser.urlencoded({ extended: true }))
+        this.server.use(bodyParser.json({}))
 
         this.endpoints.getEndpoints().forEach(data => {
 
@@ -185,10 +190,12 @@ export class DQLServer {
      
                     if (errors.length > 0) {
                         res.status(400).send({
+                            method: req.method,
                             statusCode: 400,
                             message: 'Bad Request',
                             errors: errors.map(i => { return i.message }),
                             path: req.originalUrl
+                            
                         })
                     } else {
                         next() 
@@ -221,10 +228,7 @@ export class DQLServer {
 
         })  
 
-        this.server.use(this.handleNotFound.bind(this))
-        this.server.use(this.handleMethodNotAllowed.bind(this))
-        this.server.use(bodyParser.urlencoded({ extended: true }))
-        this.server.use(bodyParser.json({}))
+        
 
         this.server.listen(this.port || 3000, this.host || 'localhost', () => {  
             console.log('listening') 

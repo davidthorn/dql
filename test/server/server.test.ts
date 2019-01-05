@@ -38,20 +38,6 @@ export class DQLServerUnitTest {
 
     }
 
-    @test "/ 200" () {
-
-        chai.request(this.host)
-        .post('/')
-        .type('json')
-        .send({
-            name: 'david'
-        })
-        .end((error, res) => {
-            expect(res.status).to.be.equal(200)
-        })
-
-    }
-
     @test "/app 400 with string property with a boolean value" () {
 
         chai.request(this.host)
