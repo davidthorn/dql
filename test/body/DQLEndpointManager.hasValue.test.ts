@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - hasValue')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - hasValue')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
     @test "validates has Value return true and false for all various values" () {
        expect(this.hasValue(1)).true

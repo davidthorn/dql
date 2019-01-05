@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - validate Request Body')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - validate Request Body')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
     @test "validate throws an error when name property does not exist and required is true"() {
 

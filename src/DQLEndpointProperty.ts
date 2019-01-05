@@ -1,4 +1,4 @@
-export type BodyDQLEndpointProperty = {
+export interface DQLEndpointProperty {
     
     /**
      * The name of the property

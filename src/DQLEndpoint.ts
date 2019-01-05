@@ -1,18 +1,20 @@
-import { BodyDQLEndpointProperty } from './BodyDQLEndpointProperty';
+import { DQLEndpointProperty } from './DQLEndpointProperty';
 import { Request , Response } from 'express'
 
-export type BodyDQLEndpoint = {
+export interface DQLEndpoint {
     
     /**
      *
      *
-     * @type {{ [id: string]: BodyDQLEndpointProperty; }}
+     * @type {{ [id: string]: DQLEndpointProperty; }}
      */
-    body: { [id: string]: BodyDQLEndpointProperty; };
+    body: { [id: string]: DQLEndpointProperty; };
 
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
     header?: { [id: string]: string; };
 
     middleware?: (request: Request , response: Response , next: () => void ) => void
+
+
 };

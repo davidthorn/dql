@@ -6,7 +6,7 @@ import chai,{expect} from 'chai'
 chai.use(require('chai-http'));
 
 @suite('DQL Server ')
-export class T {
+export class DQLServerUnitTest {
 
     host: string = 'localhost:3000'
 

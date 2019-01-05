@@ -1,28 +1,28 @@
 import isboolean from 'lodash.isboolean'
 import isnumber from 'lodash.isnumber'
 import isstring from 'lodash.isstring'
-import { BodyDQLEndpointProperty } from './BodyDQLEndpointProperty';
-import { BodyDQLEndpoint } from './BodyDQLEndpoint';
+import { DQLEndpointProperty } from './DQLEndpointProperty';
+import { DQLEndpoint } from './DQLEndpoint';
 
-export class BodyDQL {
+export class DQLEndpointManager {
 
     /**
      *
      *
-     * @type {{ [id: string]: BodyDQLEndpoint }}
+     * @type {{ [id: string]: DQLEndpoint }}
      * @memberof BodyDQL
      */
-    data: { [id: string]: BodyDQLEndpoint }
+    data: { [id: string]: DQLEndpoint }
 
     constructor() {
         this.data = {}
     }
 
-    add(name: string, endpoint: BodyDQLEndpoint) {
+    add(name: string, endpoint: DQLEndpoint) {
         this.data[name] = endpoint
     }
 
-    getEndpoints(): { path: string, endpoint: BodyDQLEndpoint }[] {
+    getEndpoints(): { path: string, endpoint: DQLEndpoint }[] {
         return Object.keys(this.data).map(key => {
             return {
                 path: key,
@@ -59,10 +59,10 @@ export class BodyDQL {
      *
      *
      * @param {string} key
-     * @returns {BodyDQLEndpoint}
+     * @returns {DQLEndpoint}
      * @memberof BodyDQL
      */
-    getEndpoint(key: string): BodyDQLEndpoint {
+    getEndpoint(key: string): DQLEndpoint {
         if (this.data[key] === undefined) {
             throw new Error(`endpoint with key ${key} does not exist`)
         }
@@ -73,23 +73,23 @@ export class BodyDQL {
     /**
      *
      *
-     * @param {BodyDQLEndpoint} endpoint
+     * @param {DQLEndpoint} endpoint
      * @returns {BodyDQLEndpointProperty[]}
      * @memberof BodyDQL
      */
-    getEndpointProperties(endpoint: BodyDQLEndpoint): BodyDQLEndpointProperty[] {
+    getEndpointProperties(endpoint: DQLEndpoint): DQLEndpointProperty[] {
         return Object.keys(endpoint.body).map(k => { return endpoint.body[k] })
     }
 
     /**
      *
      *
-     * @param {BodyDQLEndpoint} endPoint
+     * @param {DQLEndpoint} endPoint
      * @param {string} propname
      * @returns {BodyDQLEndpointProperty}
      * @memberof BodyDQL
      */
-    getEndpointProperty(endPoint: BodyDQLEndpoint, propname: string): BodyDQLEndpointProperty {
+    getEndpointProperty(endPoint: DQLEndpoint, propname: string): DQLEndpointProperty {
 
         if (endPoint.body[propname] === undefined) {
             throw new Error(`endpoint property with key ${propname} does not exist`)
@@ -187,7 +187,7 @@ export class BodyDQL {
      * @returns {Error[]}
      * @memberof BodyDQL
      */
-    validateProperty(data: { property: BodyDQLEndpointProperty, value: any | undefined | null }): Error[] {
+    validateProperty(data: { property: DQLEndpointProperty, value: any | undefined | null }): Error[] {
 
         const { property, value } = data
 
@@ -233,7 +233,7 @@ export class BodyDQL {
      * @returns {Error[]}
      * @memberof BodyDQL
      */
-    validateEndpointTypesMatch(property: BodyDQLEndpointProperty, value: any): Error[] {
+    validateEndpointTypesMatch(property: DQLEndpointProperty, value: any): Error[] {
         let errors: Error[] = []
        
         const parse = property.parse === undefined ? (i: any) => { return i } : property.parse! 
@@ -301,7 +301,7 @@ export class BodyDQL {
      * @returns {boolean}
      * @memberof BodyDQL
      */
-    isPropertyRequired(property: BodyDQLEndpointProperty): boolean {
+    isPropertyRequired(property: DQLEndpointProperty): boolean {
         return property.required === undefined ? false : property.required!
     }
 
@@ -314,7 +314,7 @@ export class BodyDQL {
      * @returns {boolean}
      * @memberof BodyDQL
      */
-    shouldValidateProperty(property: BodyDQLEndpointProperty, value: any | undefined | null): boolean {
+    shouldValidateProperty(property: DQLEndpointProperty, value: any | undefined | null): boolean {
         // let errors: Error[] = []
         switch (this.hasValue(value)) {
             case true: return true
@@ -334,7 +334,7 @@ export class BodyDQL {
      * @returns {Error[]}
      * @memberof BodyDQL
      */
-    getErrorsForProperty(propertyKey: string, prop: BodyDQLEndpointProperty): Error[] {
+    getErrorsForProperty(propertyKey: string, prop: DQLEndpointProperty): Error[] {
         if (prop.errors !== undefined && prop.errors[propertyKey] !== undefined) {
             return prop.errors[propertyKey].map(error => { return new Error(error) })
         }

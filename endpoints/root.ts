@@ -1,6 +1,6 @@
-import { BodyDQLEndpoint } from '../src/body/BodyDQLEndpoint';
+import { DQLEndpoint } from '../src/DQLEndpoint';
 
-const endpoint: BodyDQLEndpoint = {
+const endpoint: DQLEndpoint = {
     body : {
 
     },

@@ -6,7 +6,7 @@ import chai,{expect} from 'chai'
 chai.use(require('chai-http'));
 
 @suite('Home Endpoint')
-export class T {
+export class HomeEndpointUnitTest {
 
     host: string = 'localhost:3000'
 
@@ -33,7 +33,7 @@ export class T {
             name: 1
         })
         .end((error, res) => {
-            expect(res.status).to.be.equal(200)
+            expect(res.status).to.be.equal(400)
         })
 
     }

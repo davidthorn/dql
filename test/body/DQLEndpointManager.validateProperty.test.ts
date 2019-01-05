@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - validateProperty')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - validateProperty')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
     @test "returns the correct number of errors message when invalid data provided"() {
 

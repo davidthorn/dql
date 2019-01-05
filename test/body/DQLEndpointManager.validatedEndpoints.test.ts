@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - validatedEndpoints')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - validatedEndpoints')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
     goodMockdata: { [id: string] : any } = {
         "/app" : {
