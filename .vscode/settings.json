@@ -1,7 +1,13 @@
 {
     "files.exclude": {
         "**/*.js.map": true,
-        "**/*.jsa": true
+        "**/*.js": true,
+        "**/*.d.ts": true,
+        "test/": false,
+        "node_modules": true,
+        "LICENSE" : true,
+        "README.md": true,
+        ".gitignore" : false
     },
     "editor.fontSize": 12,
     "files.autoSave": "onWindowChange"

@@ -33,14 +33,12 @@ export class T {
             name: 'david'
         })
         .end((error, res) => {
-            //expect(res.status).to.be.equal(404)
-            //expect(res.body.statusCode , 'res.body.statusCode').to.equal(404)
             expect(res.body.message , 'res.body.statusCode').to.equal('Not Found')
         })
 
     }
 
-    @test "/ 404" () {
+    @test "/ 200" () {
 
         chai.request(this.host)
         .post('/')
@@ -49,10 +47,7 @@ export class T {
             name: 'david'
         })
         .end((error, res) => {
-            expect(res.status).to.be.equal(404)
-            console.log(res.body) 
-            expect(res.body.statusCode , 'res.body.statusCode').to.equal(404)
-            // expect(res.body.message , 'res.body.statusCode').to.equal('Not Found')
+            expect(res.status).to.be.equal(200)
         })
 
     }
@@ -61,7 +56,7 @@ export class T {
 
         chai.request(this.host)
         .post('/app')
-        .type('form')
+        .type('form')  
         .send({ 
             name: true
         }) 
