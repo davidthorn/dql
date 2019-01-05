@@ -21,9 +21,9 @@ let T = class T {
     constructor() {
         this.host = 'localhost:3000';
     }
-    "/app 200"() {
+    "POST /home 200"() {
         chai_1.default.request(this.host)
-            .post('/app')
+            .post('/home')
             .type('json')
             .send({
             name: 'david'
@@ -32,89 +32,82 @@ let T = class T {
             chai_1.expect(res.status).to.be.equal(200);
         });
     }
-    "/app 404"() {
+    "POST /home 400 - invalid body data"() {
         chai_1.default.request(this.host)
-            .post('/unknown')
+            .post('/home')
             .type('json')
-            .send({
-            name: 'david'
-        })
-            .end((error, res) => {
-            chai_1.expect(res.body.message, 'res.body.statusCode').to.equal('Not Found');
-        });
-    }
-    "/ 200"() {
-        chai_1.default.request(this.host)
-            .post('/')
-            .type('json')
-            .send({
-            name: 'david'
-        })
-            .end((error, res) => {
-            chai_1.expect(res.status).to.be.equal(200);
-        });
-    }
-    "/app 400 with string property with a boolean value"() {
-        chai_1.default.request(this.host)
-            .post('/app')
-            .type('form')
-            .send({
-            name: true
-        })
-            .end((error, res) => {
-            chai_1.expect(res.status).to.be.equal(400);
-            chai_1.expect(res.body.message).to.not.be.undefined;
-            chai_1.expect(res.body.statusCode).to.be.not.undefined;
-        });
-    }
-    "/app 400 with string property with a number value"() {
-        chai_1.default.request(this.host)
-            .post('/app')
-            .type('form')
             .send({
             name: 1
         })
             .end((error, res) => {
-            chai_1.expect(res.status).to.be.equal(400);
-            chai_1.expect(res.body.message).to.not.be.undefined;
-            chai_1.expect(res.body.statusCode).to.not.be.undefined;
+            chai_1.expect(res.status).to.be.equal(200);
         });
     }
-    "/app 400 with boolean property with a number value"() {
+    "GET /home/index.html 404"() {
         chai_1.default.request(this.host)
-            .post('/app')
+            .get('/home/index.html')
             .type('json')
             .send({
-            name: 'david',
-            isOld: 1
+            name: 'david'
         })
             .end((error, res) => {
-            chai_1.expect(res.status).to.be.equal(400);
-            chai_1.expect(res.body.message).to.not.be.undefined;
-            chai_1.expect(res.body.statusCode).to.not.be.undefined;
+            chai_1.expect(res.status).to.be.equal(404);
+        });
+    }
+    "PATCH /home 405"() {
+        chai_1.default.request(this.host)
+            .patch('/home')
+            .type('json')
+            .send({
+            name: 'david'
+        })
+            .end((error, res) => {
+            chai_1.expect(res.status).to.be.equal(405);
+        });
+    }
+    "DELETE /home 405"() {
+        chai_1.default.request(this.host)
+            .del('/home')
+            .type('json')
+            .send({
+            name: 'david'
+        })
+            .end((error, res) => {
+            chai_1.expect(res.status).to.be.equal(405);
+        });
+    }
+    "GET /home 405"() {
+        chai_1.default.request(this.host)
+            .get('/home')
+            .type('json')
+            .send({
+            name: 'david'
+        })
+            .end((error, res) => {
+            chai_1.expect(res.status).to.be.equal(405);
         });
     }
 };
 __decorate([
     test
-], T.prototype, "/app 200", null);
+], T.prototype, "POST /home 200", null);
 __decorate([
     test
-], T.prototype, "/app 404", null);
+], T.prototype, "POST /home 400 - invalid body data", null);
 __decorate([
     test
-], T.prototype, "/ 200", null);
+], T.prototype, "GET /home/index.html 404", null);
 __decorate([
     test
-], T.prototype, "/app 400 with string property with a boolean value", null);
+], T.prototype, "PATCH /home 405", null);
 __decorate([
     test
-], T.prototype, "/app 400 with string property with a number value", null);
+], T.prototype, "DELETE /home 405", null);
 __decorate([
     test
-], T.prototype, "/app 400 with boolean property with a number value", null);
+], T.prototype, "GET /home 405", null);
 T = __decorate([
-    suite('DQL Server ')
+    suite('Home Endpoint')
 ], T);
 exports.T = T;
-//# sourceMappingURL=server.test.js.map
+//# sourceMappingURL=home.test.js.map

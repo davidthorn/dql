@@ -1,18 +1,19 @@
-import { BodyDQLEndpoint } from './src/body/BodyDQLEndpoint';
+import { BodyDQLEndpoint } from '../src/body/BodyDQLEndpoint';
 
 const endpoint: BodyDQLEndpoint = {
     body : {
-        
+
     },
     middleware: (req, res) => {
         res.status(200).send({
-            message: 'it homes'
+            mesage: 'mother fucker',
+            body: req.originalUrl
         })
     },
     method: 'POST'
 }
 
 export default {
-    path: '/home',
+    path: '/',
     endpoint
 }

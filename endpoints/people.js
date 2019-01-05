@@ -1,8 +1,6 @@
-import DQL from './src/DQL'
-import { BodyDQLEndpoint } from './src/body/BodyDQLEndpoint';
-
-
-const rootEndpoint: BodyDQLEndpoint = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const rootEndpoint = {
     body: {
         name: {
             type: 'string',
@@ -21,8 +19,8 @@ const rootEndpoint: BodyDQLEndpoint = {
                     'The surname is required'
                 ]
             },
-            parse: (v: any): any => {
-                return `${v} is surname`
+            parse: (v) => {
+                return `${v} is surname`;
             }
         },
         age: {
@@ -36,8 +34,8 @@ const rootEndpoint: BodyDQLEndpoint = {
                     'The value which you have provided is not a valid age'
                 ]
             },
-            parse: (v: any): any => {
-                return 40
+            parse: (v) => {
+                return 40;
             }
         },
         dob: {
@@ -48,22 +46,21 @@ const rootEndpoint: BodyDQLEndpoint = {
                     'The dob is required'
                 ]
             },
-            parse: (v: any): any => {
-                return `${v} is dob`
+            parse: (v) => {
+                return `${v} is dob`;
             }
         }
     },
     middleware: (req, res) => {
         res.status(200).send({
             message: 'all good'
-        })
+        });
     },
     method: 'POST'
-}
-
+};
 const personEndpoint = {
-    path: '/person',
+    path: '/people',
     endpoint: rootEndpoint
-}
-
-export default personEndpoint
+};
+exports.default = personEndpoint;
+//# sourceMappingURL=people.js.map
