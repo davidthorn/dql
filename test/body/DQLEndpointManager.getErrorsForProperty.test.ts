@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - getErrorsForProperty')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - getErrorsForProperty')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
    @test "returns array of errors for property name when errors property exists" () {
     this.data = {

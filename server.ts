@@ -2,9 +2,9 @@ import home from './endpoints/home'
 import app from './endpoints/app'
 import root from './endpoints/root'
 import people from './endpoints/people'
-import DQL from './src/DQL'
+import DQLServer from './src/DQLServer'
 
-const server = new DQL()
+const server = new DQLServer()
 
 server.add(home.path , home.endpoint)
 server.add(app.path , app.endpoint)

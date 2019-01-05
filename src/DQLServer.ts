@@ -1,12 +1,12 @@
 
 
-import { BodyDQLEndpoint } from '../src/body/BodyDQLEndpoint'
+import { DQLEndpoint } from './DQLEndpoint'
 import e, { Response, Request } from 'express'
-import { BodyDQL } from './body/BodyDQL';
+import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
 
 
-export class DQL {
+export class DQLServer {
 
     server: e.Express
 
@@ -14,10 +14,10 @@ export class DQL {
 
     host?: string
  
-    endpoints: BodyDQL
+    endpoints: DQLEndpointManager
 
     constructor() {
-        this.endpoints = new BodyDQL()
+        this.endpoints = new DQLEndpointManager()
         this.server = e()
         this.server.use(this.handleNotFound.bind(this))
         this.server.use(this.handleMethodNotAllowed.bind(this))
@@ -68,7 +68,7 @@ export class DQL {
      */
     handleMethodNotAllowed(request: Request , response: Response , next: () => void) {
         
-        const isMethodAllowed = (request: Request , endpoint: BodyDQLEndpoint) => {
+        const isMethodAllowed = (request: Request , endpoint: DQLEndpoint) => {
             return endpoint.method !== undefined && endpoint.method! === request.method
         }
 
@@ -103,7 +103,7 @@ export class DQL {
         }
     }
 
-    add(name: string, endpoint: BodyDQLEndpoint): DQL {
+    add(name: string, endpoint: DQLEndpoint): DQLServer {
         this.endpoints.add(name, endpoint)
         return this  
     } 
@@ -194,5 +194,5 @@ export class DQL {
 }
 
 
-export default DQL
+export default DQLServer
 

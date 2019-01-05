@@ -1,9 +1,9 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
-import { BodyDQL } from "../../src/body/BodyDQL";
+import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
 
-@suite('BodyDQLUnitTest - validateEndpointTypesMatch')
-export class BodyDQLUnitTest extends BodyDQL {
+@suite('DQLEndpointManager - validateEndpointTypesMatch')
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
     @test "returns custom array of errors for property isOld when the type of the value does not match the types specification"() {
         this.data = {
