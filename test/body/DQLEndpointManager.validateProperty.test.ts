@@ -9,6 +9,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: 'string',

@@ -12,10 +12,16 @@ const endpoint: DQLEndpoint = {
             message: 'it homes'
         })
     },
-    method: 'POST'
+    method: 'GET',
+    options: {
+        rootDir: '/home/david/www/home',
+        publicDir: 'public'
+    }
+
 }
 
 export default {
     path: '/home',
     endpoint
 }
+ 

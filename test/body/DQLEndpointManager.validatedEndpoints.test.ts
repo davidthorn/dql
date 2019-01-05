@@ -17,7 +17,8 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
        
         this.data = {
             "invalidendpoint/": {
-                body : { }
+                body : { },
+                method: 'POST'
             }
         }
 
@@ -29,6 +30,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app" : {
+                method: 'POST',
                 body : { }
             }
         }
@@ -42,6 +44,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
         
         this.data = {
             "/app" : {
+                method: 'POST',
                 body : {}
             }
         }
@@ -54,6 +57,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
         
         this.data = {
             "/app" : {
+                method: 'POST',
                 body : {
                     "my-property" : {
                         type: "string"
@@ -69,6 +73,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
         
         this.data = {
             "/app" : {
+                method: 'POST',
                 body : {
                     "my property" : {
                         type: "string"
@@ -83,6 +88,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "the required properties value if exists is boolean" () {
         this.data = {
             "/app" : {
+                method: 'POST',
                 body : {
                     "my-property" : {
                         type: "string"

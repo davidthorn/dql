@@ -1,10 +1,7 @@
-
-
 import { DQLEndpoint } from './DQLEndpoint'
 import e, { Response, Request } from 'express'
 import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
-
 
 export class DQLServer {
 
@@ -19,13 +16,33 @@ export class DQLServer {
     constructor() {
         this.endpoints = new DQLEndpointManager()
         this.server = e()
-        this.server.use(this.handleNotFound.bind(this))
-        this.server.use(this.handleMethodNotAllowed.bind(this))
-        this.server.use(bodyParser.urlencoded({ extended: true }))
-        this.server.use(bodyParser.json({
+    }
+        
+    /**
+     * This method handles static content for the endpoint
+     * An endpoint should implement the options property and supply
+     * add the publicDir property with the name of the folder in which the static files are located
+     * 
+     *
+     * @param {{ path: string , endpoint: DQLEndpoint}} data
+     * @memberof DQLServer
+     */
+    handleStaticContent(data: { path: string , endpoint: DQLEndpoint}) {
+
+        if(data.endpoint.options === undefined ) return
+        const { publicDir , rootDir  } = data.endpoint.options!
+
+        let root = rootDir || ''
+        if(publicDir === undefined) return
+        root = root.length > 0 ? root.substring(root.length - 1 , root.length) === '/' ? root : `${root}/` : '' 
+
+        this.server.use(data.path , e.static(`${root}${publicDir!}` , {
+            fallthrough: false,
+            extensions: [ 'html' ],
+            redirect: true
 
         }))
-        
+
     }
 
     /**
@@ -47,11 +64,14 @@ export class DQLServer {
                 next()
             break;
             case false:
+            
             response.status(404).send({
                 statusCode: 404,
+                url: request.url,
                 message: 'Not Found',
                 path: request.originalUrl,
-                method: request.method
+                method: request.method,
+                mount: this.server.mountpath
             }) 
         }
     }
@@ -103,12 +123,19 @@ export class DQLServer {
         }
     }
 
-    add(name: string, endpoint: DQLEndpoint): DQLServer {
-        this.endpoints.add(name, endpoint)
+    /**
+     * Adds an endpoint to the manager with this path
+     *
+     * @param {string} path
+     * @param {DQLEndpoint} endpoint
+     * @returns {DQLServer}
+     * @memberof DQLServer
+     */
+    add(path: string, endpoint: DQLEndpoint): DQLServer {
+        this.endpoints.add(path, endpoint)
+        this.handleStaticContent({path, endpoint})
         return this  
     } 
-
-    
 
     /// This middleware will be called at the end if no other middleware has sent a request back
     /// this will send a 404 if anyone has any other recommendation please contact me to tell me what it
@@ -131,10 +158,14 @@ export class DQLServer {
         })
     }
  
+    /**
+     * Starts the express server to listen for all requests
+     * This method will start all endpoints which have been registered prior listen being executed
+     *
+     * @memberof DQLServer
+     */
     listen() {
 
-        // this.handle404()
-       
         this.endpoints.getEndpoints().forEach(data => {
 
             const defaultMw = (req: Request, res: Response, next: () => any) => {
@@ -164,16 +195,18 @@ export class DQLServer {
  
             }
 
+            if(data.endpoint.options !== undefined  && data.endpoint.options.rootDir) {
+                e.static(data.endpoint.options.rootDir , {
+                    fallthrough: true
+                })
+            }
+
             this.server.use(data.path, defaultMw)
 
             if (data.endpoint.middleware === undefined) return
 
             this.server.use(data.path, (req, res, next) => {
             
-                if(data.endpoint.method === undefined){
-                    return next()
-                }
-
                 if(req.method === data.endpoint.method && data.endpoint.middleware !== undefined && data.path === req.originalUrl) {
                     data.endpoint.middleware(req, res , next)
                 } else {
@@ -183,11 +216,20 @@ export class DQLServer {
 
         })  
 
-        this.handleNotHandledEndpoint()
+        this.server.use(this.handleNotFound.bind(this))
+        this.server.use(this.handleMethodNotAllowed.bind(this))
+        this.server.use(bodyParser.urlencoded({ extended: true }))
+        this.server.use(bodyParser.json({}))
 
         this.server.listen(this.port || 3000, this.host || 'localhost', () => {  
             console.log('listening') 
         })
+
+
+
+    }
+
+    handleStatusCode(chunk: any, encoding?: string, cb?: () => void): void {
 
     }
 

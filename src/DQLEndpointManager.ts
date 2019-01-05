@@ -48,7 +48,8 @@ export class DQLEndpointManager {
                     propertyName: {
                         type: Boolean
                     }
-                }
+                },
+                method: 'GET'
             }
         }
 
@@ -109,12 +110,15 @@ export class DQLEndpointManager {
     validatedEndpoints() {
 
         Object.keys(this.data).forEach(endPoint => {
+
             const d = endPoint.match(/^\/([\w\d\-]+)/)
             if (d === null) {
                 throw new Error('all endpoints must start with a forwardslash')
             }
 
             const endPointData = this.data[endPoint]
+
+            if(endPointData.method === 'GET' ) return
 
             if (endPointData.body === undefined || endPointData.body === null) {
                 throw new Error('all endpoints must contain a body property')
