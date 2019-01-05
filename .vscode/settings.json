@@ -2,7 +2,7 @@
     "files.exclude": {
         "**/*.js.map": false,
         "**/*.js": false,
-        "**/*.d.ts": true,
+        "**/*.d.ts": false,
         "test/": false,
         "node_modules": true,
         "LICENSE" : true,
