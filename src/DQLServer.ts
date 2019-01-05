@@ -5,6 +5,12 @@ import bodyParser = require('body-parser');
 
 export class DQLServer {
 
+    /**
+     * The express server
+     *
+     * @type {e.Express}
+     * @memberof DQLServer
+     */
     server: e.Express
 
     port?: number
@@ -40,7 +46,6 @@ export class DQLServer {
             fallthrough: false,
             extensions: [ 'html' ],
             redirect: true
-
         }))
 
     }
@@ -225,16 +230,8 @@ export class DQLServer {
             console.log('listening') 
         })
 
-
-
-    }
-
-    handleStatusCode(chunk: any, encoding?: string, cb?: () => void): void {
-
     }
 
 }
 
-
 export default DQLServer
-
