@@ -9,6 +9,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: Boolean,
@@ -34,6 +35,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: Boolean,
@@ -60,6 +62,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the type is boolean and value is not a classified boolean primitive" () {
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: 'boolean',
@@ -94,6 +97,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the type is number and value is not a classified number primitive" () {
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: 'number',
@@ -128,6 +132,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the properties value type does not match the endpoints property type" () {
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: 'boolean',
@@ -152,6 +157,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "properties in body which are not in defined in BodyQLEndpoint or ignored" () {
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     name: {
                         type: 'boolean',
@@ -177,6 +183,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     isOld: {
                         type: 'boolean',
@@ -198,6 +205,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     isOld: {
                         type: 'boolean',
@@ -211,7 +219,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
             originalPath: '/app',
             body: {
                 isOld: "no"
-            }
+            } 
         }
 
         expect(this.validate(request).length).to.be.equal(0)

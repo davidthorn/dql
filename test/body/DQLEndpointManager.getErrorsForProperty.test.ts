@@ -8,6 +8,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
    @test "returns array of errors for property name when errors property exists" () {
     this.data = {
         "/app": {
+            method: 'POST',
             body: {
                 isOld: {
                     type: 'boolean',

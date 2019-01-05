@@ -8,6 +8,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "returns custom array of errors for property isOld when the type of the value does not match the types specification"() {
         this.data = {
             "/app": {
+                method: 'POST',
                 body: {
                     isOld: {
                         type: 'boolean',

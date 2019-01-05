@@ -3,8 +3,8 @@
         "**/*.js.map": true,
         "**/*.js": true,
         "**/*.d.ts": false,
-        "test/": false,
-        "node_modules": true,
+        "test/": true,
+        "node_modules": false,
         "LICENSE" : true,
         "README.md": true,
         ".gitignore" : false
