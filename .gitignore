@@ -4,3 +4,5 @@ node_modules
 test/*.d.ts
 test/**/*.d.ts
 *.d.ts
+*.log
+.nyc_output
