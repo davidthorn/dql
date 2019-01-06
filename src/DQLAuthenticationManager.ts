@@ -30,12 +30,6 @@ export default class DQLAuthenticationManager {
      */
     public authenticate(request: Request, response: Response, next: () => void) {
 
-        // const match = (resourcePath: RegExp | string): boolean => {
-        //     const source = resourcePath instanceof RegExp ? resourcePath.source : `${resourcePath.split('/').join('\\/')}`
-        //     const reg = new RegExp(source)
-        //     return request.originalUrl.match(reg.source) !== null
-        // }
-
         const auths = this.authentications
             .filter(i => { return this.shouldAuthenticateRequest(i.resourcePath , request.originalUrl) })
             .filter(i => { return !i.allowedMethod.includes(request.method as HttpMethod) })
@@ -88,7 +82,33 @@ export default class DQLAuthenticationManager {
 
     }
 
+    retrieveBasicAuthenticationInfo(authorizationHeader?: string): { user: string , password: string } | undefined {
+        
+        if(authorizationHeader === undefined) return undefined
+
+        const result = authorizationHeader.match(/Basic\s*([^\s]+)/)
+        
+        if(result === null) return undefined
+
+        if(result.length !== 2) return undefined
+
+        const data = result[1]
+
+        if(data === undefined) return undefined
+
+        const credentialsData = Buffer.from(data.trim(), 'base64').toString()
+        const credentials = credentialsData.split(':')
+
+        if(credentials.length < 2) return undefined
+        
+        return {
+            user: credentials.shift()!,
+            password: credentials.join(':')
+        }
+    }
+
     public handleBasic(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
+        
         let authorized: boolean = false
         const authorization = request.headers.authorization || ''
         const result = authorization.match(/Basic\s*([^\s]+)/)
@@ -120,6 +140,15 @@ export default class DQLAuthenticationManager {
         }
     }
 
+    /**
+     * Returns true if the resource path matchs the original url
+     * Returns false for all other cases
+     *
+     * @param {(RegExp | string)} resourcePath
+     * @param {string} originalUrl
+     * @returns {boolean}
+     * @memberof DQLAuthenticationManager
+     */
     shouldAuthenticateRequest(resourcePath: RegExp | string , originalUrl: string): boolean {
         const source = resourcePath instanceof RegExp ? resourcePath.source : `${resourcePath.split('/').join('\\/')}`
         const reg = new RegExp(source)
