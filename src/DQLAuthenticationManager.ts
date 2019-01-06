@@ -82,6 +82,14 @@ export default class DQLAuthenticationManager {
 
     }
 
+    /**
+     * Returns the user and password when the authorization header contains valid basic auth information
+     * Returns false in all other situations
+     *
+     * @param {string} [authorizationHeader]
+     * @returns {({ user: string , password: string } | undefined)}
+     * @memberof DQLAuthenticationManager
+     */
     retrieveBasicAuthenticationInfo(authorizationHeader?: string): { user: string , password: string } | undefined {
         
         if(authorizationHeader === undefined) return undefined
@@ -110,19 +118,7 @@ export default class DQLAuthenticationManager {
     public handleBasic(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
         
         let authorized: boolean = false
-        // const authorization = request.headers.authorization || ''
-        // const result = authorization.match(/Basic\s*([^\s]+)/)
-        
-        // const data = result !== null && result.length === 2 ? result[1] : undefined
-
-        // if(data !== undefined) {
-        //     const credentialsData = Buffer.from(data.trim(), 'base64').toString()
-        //     const credentials = credentialsData.split(':')
-        //     if(credentials.length === 2) {
-        //         authorized = credentials[0] === basic.user && credentials[1] === basic.password
-        //     }
-        // }
-
+    
         const data = this.retrieveBasicAuthenticationInfo(request.headers.authorization)
         
         if(data !== undefined) {
