@@ -3,7 +3,7 @@
         "**/*.js.map": true,
         "**/*.js": true,
         "**/*.d.ts": true,
-        "test/": true,
+        "test/": false,
         "node_modules": true,
         "LICENSE" : true,
         "README.md": true,

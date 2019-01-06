@@ -110,19 +110,26 @@ export default class DQLAuthenticationManager {
     public handleBasic(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
         
         let authorized: boolean = false
-        const authorization = request.headers.authorization || ''
-        const result = authorization.match(/Basic\s*([^\s]+)/)
+        // const authorization = request.headers.authorization || ''
+        // const result = authorization.match(/Basic\s*([^\s]+)/)
         
-        const data = result !== null && result.length === 2 ? result[1] : undefined
+        // const data = result !== null && result.length === 2 ? result[1] : undefined
 
-        if(data !== undefined) {
-            const credentialsData = Buffer.from(data.trim(), 'base64').toString()
-            const credentials = credentialsData.split(':')
-            if(credentials.length === 2) {
-                authorized = credentials[0] === basic.user && credentials[1] === basic.password
-            }
-        }
+        // if(data !== undefined) {
+        //     const credentialsData = Buffer.from(data.trim(), 'base64').toString()
+        //     const credentials = credentialsData.split(':')
+        //     if(credentials.length === 2) {
+        //         authorized = credentials[0] === basic.user && credentials[1] === basic.password
+        //     }
+        // }
+
+        const data = this.retrieveBasicAuthenticationInfo(request.headers.authorization)
         
+        if(data !== undefined) {
+            const { user, password } = data
+            authorized = user === basic.user && password === basic.password
+        } 
+
         switch (authorized) {
             case true:
             next()
@@ -132,10 +139,7 @@ export default class DQLAuthenticationManager {
                     method: request.method,
                     statusCode: 401,
                     message: 'Unauthorized',
-                    scheme: 'Basic',
-                    result,
-                    authorization
-                   
+                    scheme: 'Basic'
                 })
         }
     }
