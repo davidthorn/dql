@@ -19,35 +19,47 @@ export class DQLServer {
     port?: number
 
     host?: string
- 
+
     endpoints: DQLEndpointManager
 
     constructor() {
         this.endpoints = new DQLEndpointManager()
         this.server = e()
     }
-        
+
+    convertUrl(url: string, params: { [id: string]: string }): string {
+
+        let output = url
+
+        Object.keys(params).forEach(key => {
+            output = output.replace(`${params[key]}`, `:${key}`)
+        })
+
+        return output
+
+    }
+
     /**
      * This method handles static content for the endpoint
      * An endpoint should implement the options property and supply
      * add the publicDir property with the name of the folder in which the static files are located
      * 
      *
-     * @param {{ path: string , endpoint: DQLEndpoint}} data
+     * @param {{ resourcePath: string , endpoint: DQLEndpoint}} data
      * @memberof DQLServer
      */
-    handleStaticContent(data: { path: string , endpoint: DQLEndpoint}) {
+    handleStaticContent(data: { resourcePath: string, endpoint: DQLEndpoint }) {
 
-        if(data.endpoint.options === undefined ) return
-        const { publicDir , rootDir  } = data.endpoint.options!
+        if (data.endpoint.options === undefined) return
+        const { publicDir, rootDir } = data.endpoint.options!
 
         let root = rootDir || ''
-        if(publicDir === undefined) return
-        root = root.length > 0 ? root.substring(root.length - 1 , root.length) === '/' ? root : `${root}/` : '' 
+        if (publicDir === undefined) return
+        root = root.length > 0 ? root.substring(root.length - 1, root.length) === '/' ? root : `${root}/` : ''
 
-        this.server.use(data.path , e.static(`${root}${publicDir!}` , {
-            fallthrough: false,
-            extensions: [ 'html' ],
+        this.server.use(data.resourcePath, e.static(`${root}${publicDir!}`, {
+            fallthrough: true,
+            extensions: ['html'],
             redirect: true
         }))
 
@@ -55,7 +67,7 @@ export class DQLServer {
 
     /**
      * This is the first middleware which will be called for all requests
-     * If this method does not find a middleware with a path which matches the originalUrl of the request
+     * If this method does not find a middleware with a resourcePath which matches the originalUrl of the request
      * then a 404 will be returned
      * This method does not check if the endpoint can handle the request just that their urls match
      *
@@ -64,23 +76,23 @@ export class DQLServer {
      * @param {() => void} next
      * @memberof DQL
      */
-    handleNotFound(request: Request , response: Response , next: () => void) {
+    handleNotFound(request: Request, response: Response, next: () => void) {
         const endpoint = this.endpoints.getEndpoints()
-        .filter(i => { return i.path === request.originalUrl }).length
-        switch(endpoint > 0) {
+            .filter(i => { return i.resourcePath === request.originalUrl }).length
+        switch (endpoint > 0) {
             case true:
                 next()
-            break;
+                break;
             case false:
-            /// TODO : Add dev | production output for here
-            response.status(404).send({
-                statusCode: 404,
-                url: request.url,
-                message: 'Not Found',
-                path: request.originalUrl,
-                method: request.method,
-                mount: this.server.mountpath
-            }) 
+                /// TODO : Add dev | production output for here
+                response.status(404).send({
+                    statusCode: 404,
+                    url: request.url,
+                    message: 'Not Found',
+                    resourcePath: request.originalUrl,
+                    method: request.method,
+                    mount: this.server.mountpath
+                })
         }
     }
 
@@ -94,58 +106,56 @@ export class DQLServer {
      * @param {() => void} next
      * @memberof DQL
      */
-    handleMethodNotAllowed(request: Request , response: Response , next: () => void) {
-        
-        const isMethodAllowed = (request: Request , endpoint: DQLEndpoint) => {
-            return endpoint.method !== undefined && endpoint.method! === request.method
-        }
+    handleMethodNotAllowed(request: Request, response: Response, next: () => void) {
 
-        const endpoints = this.endpoints.getEndpoints().filter(i => { return i.path === request.originalUrl })
-        
-        let handled: boolean = false
+        const url = this.convertUrl(request.originalUrl, request.params)
+        fs.appendFileSync(path.join(process.cwd(), 'handleMethodNotAllowed.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
 
-        if(endpoints.length > 0) {
-            handled = endpoints.filter(i => { return isMethodAllowed(request , i.endpoint) }).length > 0
-        } else {
-            /// this can never be 0 zero because the handleNotFound middleware should handled this
-            response.status(500).send({
-                statusCode: 500,
-                message: 'Internal Server Error',
-                path: request.originalUrl,
-                method: request.method
-            }) 
-            return
-        }
+        const resources = this.endpoints.getEndpoints().filter(i => { 
+            const regMatch = i.resourcePath.replace(/:[\w\d]+/ , '[^\/]+')
+            const match = url.match(new RegExp(regMatch , 'g'))
+            if(match === null) return false
+            if(match[0] === url) return true
+            return false
+        })
 
-        switch(handled) {
-            case true:
-            next()
-            break
-            default:
-            /// TODO : Add dev | production output for here
+        if(resources.length > 0) {
+            /// 405
+            const methods = resources.map(i => { return i.endpoint })
+
+            response.set('Allow' , methods.map(i => { return i.method }).join(','))
+
             response.status(405).send({
                 statusCode: 405,
                 message: 'Method Not Allowed',
-                path: request.originalUrl,
+                resourcePath: request.originalUrl,
+                method: request.method,
+                methodsAllowed: methods,
+            })
+        } else {
+            // 404
+            response.status(404).send({
+                statusCode: 404,
+                message: 'Not Found',
+                resourcePath: request.originalUrl,
                 method: request.method
-            })  
-
+          })
         }
     }
 
     /**
-     * Adds an endpoint to the manager with this path
+     * Adds an endpoint to the manager with this resourcePath
      *
-     * @param {string} path
+     * @param {string} resourcePath
      * @param {DQLEndpoint} endpoint
      * @returns {DQLServer}
      * @memberof DQLServer
      */
-    add(path: string, endpoint: DQLEndpoint): DQLServer {
-        this.endpoints.add(path, endpoint)
-        this.handleStaticContent({path, endpoint})
-        return this  
-    } 
+    add(resourcePath: string, endpoint: DQLEndpoint): DQLServer {
+        this.endpoints.add(resourcePath, endpoint)
+        this.handleStaticContent({ resourcePath, endpoint })
+        return this
+    }
 
     /// This middleware will be called at the end if no other middleware has sent a request back
     /// this will send a 404 if anyone has any other recommendation please contact me to tell me what it
@@ -156,19 +166,19 @@ export class DQLServer {
             try {
                 /// TODO: This can for sure be reduced
                 const endpoint = this.endpoints.getEndpoint(req.originalUrl)
-                if(endpoint.middleware === undefined) throw new Error()
-                if(req.method !== endpoint.method) throw new Error()
+                if (endpoint.middleware === undefined) throw new Error()
+                if (req.method !== endpoint.method) throw new Error()
                 endpoint.middleware(req, res, next)
-            } catch(error) {
+            } catch (error) {
                 res.status(404).send({
                     statusCode: 404,
                     message: 'Not Found',
-                    path: req.originalUrl 
+                    resourcePath: req.originalUrl
                 })
             }
         })
     }
- 
+
     /**
      * Starts the express server to listen for all requests
      * This method will start all endpoints which have been registered prior listen being executed
@@ -178,63 +188,97 @@ export class DQLServer {
     listen() {
 
         this.handleLogging()
-        this.server.use(this.handleNotFound.bind(this))
-        this.server.use(this.handleMethodNotAllowed.bind(this))
+        //  this.server.use(this.handleNotFound.bind(this))
+        //this.server.use(this.handleMethodNotAllowed.bind(this))
         this.server.use(bodyParser.urlencoded({ extended: true }))
         this.server.use(bodyParser.json({}))
 
+
+
         this.endpoints.getEndpoints().forEach(data => {
 
-            const defaultMw = (req: Request, res: Response, next: () => any) => {
- 
-                const body = req.headers["content-type"] === "application/json" ? req.body : req.body
-                
-                try { 
-                    const errors = this.endpoints.validate({ 
-                        body: body === undefined ? {} : body,
-                        originalPath: req.originalUrl
-                    })
-     
-                    if (errors.length > 0) {
-                        res.status(400).send({
-                            method: req.method,
-                            statusCode: 400,
-                            message: 'Bad Request',
-                            errors: errors.map(i => { return i.message }),
-                            path: req.originalUrl
-                        })
-                    } else {
-                        next() 
-                    }
-                } catch(error) {
-                    next()
-                }  
-            }
+            const { resourcePath, endpoint } = data
+            const { middleware } = endpoint
+            const method = data.endpoint.method
+            if (middleware !== undefined) {
 
-            if(data.endpoint.options !== undefined  && data.endpoint.options.rootDir) {
-                e.static(data.endpoint.options.rootDir , {
-                    fallthrough: true
-                })
-            }
-
-            this.server.use(data.path, defaultMw)
-
-            if (data.endpoint.middleware === undefined) return
-
-            this.server.use(data.path, (req, res, next) => {
-            
-                if(req.method === data.endpoint.method && data.endpoint.middleware !== undefined && data.path === req.originalUrl) {
-                    data.endpoint.middleware(req, res , next)
-                } else {
-                    next() 
+                switch (method) {
+                    case 'GET':
+                        this.server.get(resourcePath, middleware)
+                        break;
+                    case 'DELETE':
+                        this.server.delete(resourcePath, this.handleValidation.bind(this))
+                        this.server.delete(resourcePath, middleware)
+                        break;
+                    case 'PATCH':
+                        this.server.patch(resourcePath, this.handleValidation.bind(this))
+                        this.server.patch(resourcePath, middleware)
+                        break;
+                    case 'PUT':
+                        this.server.put(resourcePath, this.handleValidation.bind(this))
+                        this.server.put(resourcePath, middleware)
+                        break;
+                    case 'POST':
+                        this.server.post(resourcePath, this.handleValidation.bind(this))
+                        this.server.post(resourcePath, middleware)
+                        break
+                    case 'HEAD':
+                        this.server.head(resourcePath, middleware)
+                        break;
                 }
-            })
-
-        })  
-
-        this.server.listen(this.port || 3000, this.host || 'localhost', () => {  
-            console.log('listening') 
+            }
         })
+
+        
+        this.server.use(this.handleMethodNotAllowed.bind(this))
+
+
+
+        this.server.listen(this.port || 3000, this.host || 'localhost', () => {
+            console.log('listening')
+        })
+
+    }
+
+    handleValidation(request: Request, response: Response, next: () => void) {
+
+        const url = this.convertUrl(request.originalUrl, request.params)
+        fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
+
+        if (!this.endpoints.hasEndpoint(`${url}`)) {
+            return next()
+        }
+
+        const endpoint = this.endpoints.getEndpoints().filter(i => { return i.resourcePath === url && (i.endpoint.method === request.method || i.endpoint.method === 'REST') })
+        fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify(endpoint, null, 2), { encoding: 'utf8' })
+
+        switch (request.method) {
+            case 'DELETE':
+                return next()
+            case 'PATCH':
+                return next()
+            case 'PUT':
+                return next()
+            case 'POST':
+                const errors = this.endpoints.validate({
+                    body: request.body === undefined ? {} : request.body,
+                    originalPath: `${url}|${request.method}`
+                })
+
+                if (errors.length > 0) {
+                    fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify(errors, null, 2), { encoding: 'utf8' })
+                    response.status(400).send({
+                        method: request.method,
+                        statusCode: 400,
+                        message: 'Bad Request',
+                        errors: errors.map(i => { return i.message }),
+                        resourcePath: request.originalUrl
+                    })
+                } else {
+                    return next()
+                }
+                break
+        }
 
     }
 
@@ -244,11 +288,11 @@ export class DQLServer {
      * @memberof DQLServer
      */
     handleLogging() {
-        const responseAccessLogStream = fs.createWriteStream(path.join(process.cwd() , 'response.log') , {flags: 'a'})
-        this.server.use(morgan('combined' , { stream: responseAccessLogStream  , immediate: false }))
+        const responseAccessLogStream = fs.createWriteStream(path.join(process.cwd(), 'response.log'), { flags: 'a' })
+        this.server.use(morgan('combined', { stream: responseAccessLogStream, immediate: false }))
 
-        const requestAccessLogStream = fs.createWriteStream(path.join(process.cwd() , 'request.log') , {flags: 'a'})
-        this.server.use(morgan('combined' , { stream: requestAccessLogStream , immediate: true }))
+        const requestAccessLogStream = fs.createWriteStream(path.join(process.cwd(), 'request.log'), { flags: 'a' })
+        this.server.use(morgan('combined', { stream: requestAccessLogStream, immediate: true }))
     }
 
 }

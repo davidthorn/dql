@@ -15,12 +15,14 @@ export interface DQLEndpoint {
      */
     body: { [id: string]: DQLEndpointProperty; };
 
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'REST'
 
     header?: { [id: string]: string; };
 
     middleware?: (request: Request , response: Response , next: () => void ) => void
 
     options?: DQLEndpointOptions
+
+    resourcePath: string
 
 };

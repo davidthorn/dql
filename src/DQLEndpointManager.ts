@@ -18,21 +18,55 @@ export class DQLEndpointManager {
         this.data = {}
     }
 
-    add(name: string, endpoint: DQLEndpoint) {
-        this.data[name] = endpoint
+    map(endpoint: DQLEndpoint , method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): DQLEndpoint {
+        let d = Object.create(endpoint)
+        d.method = method
+        switch(method) {
+            case 'GET':
+            d.path = `${endpoint.resourcePath}`
+            break;
+            case 'POST':
+            d.path = `${endpoint.resourcePath}`
+            break;
+            default:
+            d.path = `${endpoint.resourcePath}/:id`
+            break;
+        }
+        
+        return d
     }
 
-    getEndpoints(): { path: string, endpoint: DQLEndpoint }[] {
+    add(name: string, endpoint: DQLEndpoint) {
+        
+        switch(endpoint.method) {
+            case 'REST':
+            this.add(name , this.map(endpoint , 'GET'))
+            this.add(name , this.map(endpoint , 'POST'))
+            this.add(`${name}/:id` , this.map(endpoint , 'PUT'))
+            this.add(`${name}/:id` , this.map(endpoint , 'PATCH'))
+            this.add(`${name}/:id` , this.map(endpoint , 'DELETE'))
+            break
+            default:
+            this.data[`${name}|${endpoint.method}`] = endpoint
+        }
+        
+    }
+
+    handlesEndpoint(resource: string): boolean  {
+        return Object.keys(this.data).filter(i => { i === resource }).length === 1 
+    }
+
+    getEndpoints(): { resourcePath: string, endpoint: DQLEndpoint }[] {
         return Object.keys(this.data).map(key => {
             return {
-                path: key,
+                resourcePath: key.split('|')[0],
                 endpoint: this.getEndpoint(key)
             }
         })
     }
 
     hasEndpoint(path: string): boolean {
-        return this.getEndpoints().filter(i => { return (i.path === path) ? i : undefined }).length > 0
+        return this.getEndpoints().filter(i => { return (i.resourcePath === path) ? i : undefined }).length > 0
     }
 
     /**
@@ -49,6 +83,7 @@ export class DQLEndpointManager {
                         type: Boolean
                     }
                 },
+                resourcePath: '/app',
                 method: 'GET'
             }
         }

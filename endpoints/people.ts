@@ -33,9 +33,6 @@ const rootEndpoint: DQLEndpoint = {
                 type: [
                     'The value which you have provided is not a valid age'
                 ]
-            },
-            parse: (v: any): any => {
-                return 40
             }
         },
         dob: {
@@ -56,11 +53,12 @@ const rootEndpoint: DQLEndpoint = {
             message: 'all good'
         })
     },
-    method: 'POST'
+    method: 'REST',
+    resourcePath: '/people'
 }
 
 const personEndpoint = {
-    path: '/people',
+    resourcePath: rootEndpoint.resourcePath,
     endpoint: rootEndpoint
 }
 

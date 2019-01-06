@@ -8,6 +8,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validates if a property is required to be validated" () {
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {

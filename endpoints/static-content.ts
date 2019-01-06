@@ -5,12 +5,13 @@ const endpoint: DQLEndpoint = {
     method: 'GET',
     options: {
         publicDir: 'endpoints/public'
-    }
+    },
+    resourcePath: '/static-content'
 
 }
 
 export default {
-    path: '/static-content',
+    resourcePath: endpoint.resourcePath,
     endpoint
 }
  

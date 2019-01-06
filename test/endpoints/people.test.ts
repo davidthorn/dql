@@ -5,18 +5,21 @@
 import chai,{expect} from 'chai'
 chai.use(require('chai-http'));
 
-@suite('Home Endpoint')
-export class HomeEndpointUnitTest {
+@suite('People Endpoint')
+export class PeopleEndpointUnitTest {
 
     host: string = 'localhost:3000'
 
-    @test "POST /home 200" () {
+    @test "POST /people 200" () {
 
         chai.request(this.host)
-        .post('/home')
+        .post('/people')
         .type('json')
         .send({
-            name: 'david'
+            name: 'david',
+            surname: 'thorn',
+            age: 40,
+            dob: '22 12 1978'
         })
         .end((error, res) => {
             expect(res.status).to.be.equal(200)
@@ -24,10 +27,10 @@ export class HomeEndpointUnitTest {
 
     }
 
-    @test "POST /home 400 - invalid body data" () {
+    @test "POST /people 400 - invalid body data" () {
 
         chai.request(this.host)
-        .post('/home')
+        .post('/people')
         .type('json')
         .send({
             name: 1
@@ -38,58 +41,50 @@ export class HomeEndpointUnitTest {
 
     }
 
-    @test "GET /home/index.html 404" () {
+    @test "GET /people/index.html 404" () {
 
         chai.request(this.host)
-        .get('/home/index.html')
-        .type('json')
-        .send({
-            name: 'david'
-        })
-        .end((error, res) => {
-            expect(res.status).to.be.equal(404)
-        })
-
-    }
-
-    @test "PATCH /home 405" () {
-
-        chai.request(this.host)
-        .patch('/home')
-        .type('json')
-        .send({
-            name: 'david'
-        })
+        .get('/people/index.html')
         .end((error, res) => {
             expect(res.status).to.be.equal(405)
         })
 
     }
 
-    @test "DELETE /home 405" () {
+    @test "PATCH /people/:id 405" () {
 
         chai.request(this.host)
-        .del('/home')
+        .patch('/people/10')
         .type('json')
         .send({
-            name: 'david'
+            name: 'david',
+            surname: 'thorn',
+            age: 40,
+            dob: '22 12 1978'
         })
         .end((error, res) => {
-            expect(res.status).to.be.equal(405)
+            expect(res.status).to.be.equal(200)
+        }) 
+
+    }
+
+    @test "DELETE /people/:id 405" () {
+
+        chai.request(this.host)
+        .del('/people/10')
+        .type('json')
+        .end((error, res) => {
+            expect(res.status).to.be.equal(200)
         })
 
     }
 
-    @test "GET /home 405" () {
+    @test "GET /people 200" () {
 
         chai.request(this.host)
-        .get('/home')
-        .type('json')
-        .send({
-            name: 'david'
-        })
+        .get('/people')
         .end((error, res) => {
-            expect(res.status).to.be.equal(405)
+            expect(res.status).to.be.equal(200)
         }) 
 
     }

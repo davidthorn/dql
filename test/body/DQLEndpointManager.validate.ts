@@ -9,6 +9,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -35,6 +36,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -62,6 +64,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the type is boolean and value is not a classified boolean primitive" () {
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -97,6 +100,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the type is number and value is not a classified number primitive" () {
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -132,6 +136,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "validate throws an error when the properties value type does not match the endpoints property type" () {
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -157,6 +162,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
     @test "properties in body which are not in defined in BodyQLEndpoint or ignored" () {
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     name: {
@@ -183,6 +189,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     isOld: {
@@ -205,6 +212,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
 
         this.data = {
             "/app": {
+                resourcePath: '/app',
                 method: 'POST',
                 body: {
                     isOld: {
