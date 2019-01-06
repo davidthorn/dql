@@ -5,6 +5,7 @@ import bodyParser = require('body-parser');
 import morgan from 'morgan'
 import * as fs from 'fs'
 import * as path from 'path'
+import { request } from 'https';
 
 export class DQLServer {
 
@@ -188,12 +189,22 @@ export class DQLServer {
     listen() {
 
         this.handleLogging()
-        //  this.server.use(this.handleNotFound.bind(this))
-        //this.server.use(this.handleMethodNotAllowed.bind(this))
         this.server.use(bodyParser.urlencoded({ extended: true }))
         this.server.use(bodyParser.json({}))
 
-
+        this.server.use((error: Error , request: Request , response: Response , next: () => void) => {
+            if (error instanceof SyntaxError)  {
+                response.status(400).send({
+                    method: request.method,
+                    resourcePath: request.originalUrl,
+                    statusCode: 400,
+                    error: "The body of your request is not valid json!"
+                })
+                return
+            }
+            
+            response.status(500).send();
+        })
 
         this.endpoints.getEndpoints().forEach(data => {
 
