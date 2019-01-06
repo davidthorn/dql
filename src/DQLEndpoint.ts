@@ -1,6 +1,11 @@
 import { DQLEndpointProperty } from './DQLEndpointProperty';
 import { Request , Response } from 'express'
 
+export interface DQLEndpointOptions {
+    rootDir?: string
+    publicDir?: string
+}
+
 export interface DQLEndpoint {
     
     /**
@@ -16,9 +21,6 @@ export interface DQLEndpoint {
 
     middleware?: (request: Request , response: Response , next: () => void ) => void
 
-    options?: {
-        rootDir?: string,
-        publicDir?: string
-    }
+    options?: DQLEndpointOptions
 
 };

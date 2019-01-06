@@ -2,6 +2,9 @@ import { DQLEndpoint } from './DQLEndpoint'
 import e, { Response, Request } from 'express'
 import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
+import morgan from 'morgan'
+import * as fs from 'fs'
+import * as path from 'path'
 
 export class DQLServer {
 
@@ -69,7 +72,7 @@ export class DQLServer {
                 next()
             break;
             case false:
-            
+            /// TODO : Add dev | production output for here
             response.status(404).send({
                 statusCode: 404,
                 url: request.url,
@@ -119,6 +122,7 @@ export class DQLServer {
             next()
             break
             default:
+            /// TODO : Add dev | production output for here
             response.status(405).send({
                 statusCode: 405,
                 message: 'Method Not Allowed',
@@ -150,6 +154,7 @@ export class DQLServer {
         this.server.use((req, res, next) => {
 
             try {
+                /// TODO: This can for sure be reduced
                 const endpoint = this.endpoints.getEndpoint(req.originalUrl)
                 if(endpoint.middleware === undefined) throw new Error()
                 if(req.method !== endpoint.method) throw new Error()
@@ -171,6 +176,8 @@ export class DQLServer {
      * @memberof DQLServer
      */
     listen() {
+
+        this.handleLogging()
         this.server.use(this.handleNotFound.bind(this))
         this.server.use(this.handleMethodNotAllowed.bind(this))
         this.server.use(bodyParser.urlencoded({ extended: true }))
@@ -180,7 +187,7 @@ export class DQLServer {
 
             const defaultMw = (req: Request, res: Response, next: () => any) => {
  
-                const body = req.headers["content-type"] === "application/json" ?req.body : req.body
+                const body = req.headers["content-type"] === "application/json" ? req.body : req.body
                 
                 try { 
                     const errors = this.endpoints.validate({ 
@@ -195,7 +202,6 @@ export class DQLServer {
                             message: 'Bad Request',
                             errors: errors.map(i => { return i.message }),
                             path: req.originalUrl
-                            
                         })
                     } else {
                         next() 
@@ -203,8 +209,6 @@ export class DQLServer {
                 } catch(error) {
                     next()
                 }  
-                
- 
             }
 
             if(data.endpoint.options !== undefined  && data.endpoint.options.rootDir) {
@@ -228,12 +232,23 @@ export class DQLServer {
 
         })  
 
-        
-
         this.server.listen(this.port || 3000, this.host || 'localhost', () => {  
             console.log('listening') 
         })
 
+    }
+
+    /**
+     * Handles the logging of all requests and responses which are produced by the server into the request.log and response.log
+     *
+     * @memberof DQLServer
+     */
+    handleLogging() {
+        const responseAccessLogStream = fs.createWriteStream(path.join(process.cwd() , 'response.log') , {flags: 'a'})
+        this.server.use(morgan('combined' , { stream: responseAccessLogStream  , immediate: false }))
+
+        const requestAccessLogStream = fs.createWriteStream(path.join(process.cwd() , 'request.log') , {flags: 'a'})
+        this.server.use(morgan('combined' , { stream: requestAccessLogStream , immediate: true }))
     }
 
 }
