@@ -14,6 +14,7 @@ export class PeopleEndpointUnitTest {
 
         chai.request(this.host)
         .post('/people')
+        .auth('david', '123456' , { type: 'basic' })
         .type('json')
         .send({
             name: 'david',
@@ -31,6 +32,7 @@ export class PeopleEndpointUnitTest {
 
         chai.request(this.host)
         .post('/people')
+        .auth('david', '123456' , { type: 'basic' })
         .type('json')
         .send({
             name: 1
@@ -41,12 +43,12 @@ export class PeopleEndpointUnitTest {
 
     }
 
-    @test "GET /people/index.html 404" () {
+    @test "GET /people/index.html 401" () {
 
         chai.request(this.host)
         .get('/people/index.html')
         .end((error, res) => {
-            expect(res.status).to.be.equal(405)
+            expect(res.status).to.be.equal(401)
         })
 
     }
@@ -56,6 +58,7 @@ export class PeopleEndpointUnitTest {
         chai.request(this.host)
         .patch('/people/10')
         .type('json')
+        .auth('david', '123456' , { type: 'basic' })
         .send({
             name: 'david',
             surname: 'thorn',
@@ -73,6 +76,7 @@ export class PeopleEndpointUnitTest {
         chai.request(this.host)
         .del('/people/10')
         .type('json')
+        .auth('david', '123456' , { type: 'basic' })
         .end((error, res) => {
             expect(res.status).to.be.equal(200)
         })
@@ -83,6 +87,7 @@ export class PeopleEndpointUnitTest {
 
         chai.request(this.host)
         .get('/people')
+        .auth('david', '123456' , { type: 'basic' })
         .end((error, res) => {
             expect(res.status).to.be.equal(200)
         }) 
