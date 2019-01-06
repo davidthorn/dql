@@ -1,10 +1,10 @@
 {
     "files.exclude": {
         "**/*.js.map": true,
-        "**/*.js": false,
+        "**/*.js": true,
         "**/*.d.ts": true,
-        "test/": false,
-        "node_modules": false,
+        "test/": true,
+        "node_modules": true,
         "LICENSE" : true,
         "README.md": true,
         ".gitignore" : false
