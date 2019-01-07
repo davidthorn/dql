@@ -1,3 +1,5 @@
+export type DQLEndpointPropertyType = 'string' | 'number' | 'boolean' | 'any'
+
 export interface DQLEndpointProperty {
     
     /**
@@ -12,7 +14,7 @@ export interface DQLEndpointProperty {
      *
      * @type {*}
      */
-    type: any;
+    type: DQLEndpointPropertyType;
     
     /**
      *

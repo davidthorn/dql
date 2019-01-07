@@ -13,7 +13,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
                 method: 'POST',
                 body: {
                     name: {
-                        type: Boolean,
+                        type: 'boolean',
                         required: true
 
                     }
@@ -40,7 +40,7 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
                 method: 'POST',
                 body: {
                     name: {
-                        type: Boolean,
+                        type: 'string',
                         required: true
 
                     }

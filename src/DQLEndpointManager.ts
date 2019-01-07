@@ -80,7 +80,7 @@ export class DQLEndpointManager {
             "/app": {
                 body: {
                     propertyName: {
-                        type: Boolean
+                        type: 'boolean'
                     }
                 },
                 resourcePath: '/app',

@@ -8,9 +8,9 @@
     "test": "nyc mocha",
     "watch": "mocha-typescript-watch",
     "prepare": "tsc",
-    "build" : "tsc --build",
+    "build": "tsc --build",
     "serve:mock": "npm run build && node server.js",
-    "clean" : "tsc --build --clean"
+    "clean": "tsc --build --clean"
   },
   "repository": {
     "type": "git",
@@ -52,10 +52,22 @@
   },
   "nyc": {
     "watermarks": {
-      "lines": [20, 95],
-      "functions": [20, 95],
-      "branches": [20, 95],
-      "statements": [20, 95]
+      "lines": [
+        20,
+        95
+      ],
+      "functions": [
+        20,
+        95
+      ],
+      "branches": [
+        20,
+        95
+      ],
+      "statements": [
+        20,
+        95
+      ]
     }
   }
 }
