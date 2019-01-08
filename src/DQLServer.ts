@@ -220,6 +220,12 @@ export class DQLServer {
 
         this.endpoints.getEndpoints().forEach(data => {
 
+            if(data.endpoint.env !== undefined) {
+                Object.keys(data.endpoint.env).forEach(key => {
+                    data.endpoint.env![key] = process.env[key]
+                })
+            }
+
             const { resourcePath, endpoint } = data
             const { middleware } = endpoint
             const method = data.endpoint.method
@@ -227,26 +233,26 @@ export class DQLServer {
 
                 switch (method) {
                     case 'GET':
-                        this.server.get(resourcePath, middleware)
+                        this.server.get(resourcePath, middleware.bind(data.endpoint))
                         break;
                     case 'DELETE':
                         this.server.delete(resourcePath, this.handleValidation.bind(this))
-                        this.server.delete(resourcePath, middleware)
+                        this.server.delete(resourcePath, middleware.bind(data.endpoint))
                         break;
                     case 'PATCH':
                         this.server.patch(resourcePath, this.handleValidation.bind(this))
-                        this.server.patch(resourcePath, middleware)
+                        this.server.patch(resourcePath, middleware.bind(data.endpoint))
                         break;
                     case 'PUT':
                         this.server.put(resourcePath, this.handleValidation.bind(this))
-                        this.server.put(resourcePath, middleware)
+                        this.server.put(resourcePath, middleware.bind(data.endpoint))
                         break;
                     case 'POST':
                         this.server.post(resourcePath, this.handleValidation.bind(this))
-                        this.server.post(resourcePath, middleware)
+                        this.server.post(resourcePath, middleware.bind(data.endpoint))
                         break
                     case 'HEAD':
-                        this.server.head(resourcePath, middleware)
+                        this.server.head(resourcePath, middleware.bind(data.endpoint))
                         break;
                 }
             }

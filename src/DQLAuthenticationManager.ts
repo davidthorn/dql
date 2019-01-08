@@ -45,7 +45,7 @@ export default class DQLAuthenticationManager {
             switch (auth.scheme) {
                 case 'FBAuth':
                 if(auth.firebaseAuth !== undefined) {
-                    this.handleFirebaseAuth(auth, auth.firebaseAuth , request, response, next)
+                    this.handleFirebaseAuth(auth, request, response, next)
                 } else {
                     response.status(401).send({
                         method: request.method,
@@ -189,7 +189,7 @@ export default class DQLAuthenticationManager {
         return originalUrl.match(reg.source) !== null
     }
 
-    public handleFirebaseAuth(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
+    public handleFirebaseAuth(auth: DQLAuthentication,  request: Request, response: Response, next: () => void) {
         
         const data = this.retrieveAuthenticationInfo( 'Bearer',  request.headers.authorization)
         

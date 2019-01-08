@@ -23,20 +23,7 @@ const firebaseAuthLoginEmailPassword = async (params: AuthEmailLoginParams) => {
 
     const { email , password } = params.credentials
 
-    const api_key = process.env.API_KEY
- 
-    if(api_key === undefined) {
-        return Promise.reject({
-            error: {
-                code: 11,
-                message: 'API KEY not found in environment variables',
-                errors: [],
-                status: 'MISSING_API_KEY'
-            }
-        })
-    }
-
-    return await fetch(`${host}${path}verifyPassword?key=${process.env.API_KEY}` , {
+    return await fetch(`${host}${path}verifyPassword?key=${params.API_KEY}` , {
         method: 'POST',
         body: JSON.stringify({ 
             email: email ,  

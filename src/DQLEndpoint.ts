@@ -25,4 +25,5 @@ export interface DQLEndpoint {
 
     resourcePath: string
 
+    env?: { [id:string] : string | undefined }
 };

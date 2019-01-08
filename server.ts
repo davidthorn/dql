@@ -21,7 +21,7 @@ server.addAuthentication({
     name: 'bearer',
     priority: 1,
     firebaseAuth: {
-        
+        API_KEY: process.env.API_KEY || ''
     }
 })
 
@@ -33,7 +33,7 @@ server.addAuthentication({
     priority: 2,
     basic : {
         user: 'david',
-        password: '123456'
+        password: '123456' 
     }
 })
 

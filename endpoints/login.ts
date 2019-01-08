@@ -16,20 +16,42 @@ const login: DQLEndpoint = {
         }
     },
     method: 'POST',
-    middleware: async (request: Request, response: Response) => {
+    middleware: async function (request: Request, response: Response) {
         
+        if(this.env === undefined) {
+            response.status(500).send({
+                method: request.method,
+                statusCode: 500,
+                message: 'API_KEY not set in env'
+            })
+            return
+        }
+
+        if(this.env.API_KEY === undefined) {
+            response.status(500).send({
+                method: request.method,
+                statusCode: 500,
+                message: 'API_KEY not set in env'
+            })
+            return
+        }
+
         const result = await firebaseAuthLoginEmailPassword({
             credentials: {
                 email: request.body.email, 
                 password: request.body.password
             },
-            returnSecureToken: true
+            returnSecureToken: true,
+            API_KEY: this.env.API_KEY
         }).catch(error => {
             response.status(error.error.code).send(error)
         })
 
         response.status(200).send(result)
 
+    },
+    env: {
+        API_KEY: undefined
     }
 
 }

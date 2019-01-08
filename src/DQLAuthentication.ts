@@ -58,7 +58,7 @@ export interface DQLAuthentication {
 
     basic?: BasicAuthentication
 
-    firebaseAuth?: any
+    firebaseAuth?: {  }
 
 }
 
