@@ -1,5 +1,5 @@
 import { DQLEndpointProperty } from './DQLEndpointProperty';
-import { Request , Response } from 'express'
+import { Request, Response } from 'express'
 
 export interface DQLEndpointOptions {
     rootDir?: string
@@ -7,7 +7,7 @@ export interface DQLEndpointOptions {
 }
 
 export interface DQLEndpoint {
-    
+
     /**
      *
      *
@@ -19,11 +19,11 @@ export interface DQLEndpoint {
 
     header?: { [id: string]: string; };
 
-    middleware?: (request: Request , response: Response , next: () => void ) => void
+    middleware?: (request: Request, response: Response, next: () => void) => void
 
     options?: DQLEndpointOptions
 
     resourcePath: string
 
-    env?: { [id:string] : string | undefined }
+    env?: { [id: string]: string | undefined }
 };

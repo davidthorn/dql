@@ -14,46 +14,46 @@ export class DQLEndpointManager {
      */
     data: { [id: string]: DQLEndpoint }
 
-    constructor() {
+    constructor () {
         this.data = {}
     }
 
-    map(endpoint: DQLEndpoint , method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): DQLEndpoint {
+    map(endpoint: DQLEndpoint, method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): DQLEndpoint {
         let d = Object.create(endpoint)
         d.method = method
-        switch(method) {
+        switch (method) {
             case 'GET':
-            d.path = `${endpoint.resourcePath}`
-            break;
+                d.path = `${endpoint.resourcePath}`
+                break;
             case 'POST':
-            d.path = `${endpoint.resourcePath}`
-            break;
+                d.path = `${endpoint.resourcePath}`
+                break;
             default:
-            d.path = `${endpoint.resourcePath}/:id`
-            break;
+                d.path = `${endpoint.resourcePath}/:id`
+                break;
         }
-        
+
         return d
     }
 
     add(name: string, endpoint: DQLEndpoint) {
-        
-        switch(endpoint.method) {
+
+        switch (endpoint.method) {
             case 'REST':
-            this.add(name , this.map(endpoint , 'GET'))
-            this.add(name , this.map(endpoint , 'POST'))
-            this.add(`${name}/:id` , this.map(endpoint , 'PUT'))
-            this.add(`${name}/:id` , this.map(endpoint , 'PATCH'))
-            this.add(`${name}/:id` , this.map(endpoint , 'DELETE'))
-            break
+                this.add(name, this.map(endpoint, 'GET'))
+                this.add(name, this.map(endpoint, 'POST'))
+                this.add(`${name}/:id`, this.map(endpoint, 'PUT'))
+                this.add(`${name}/:id`, this.map(endpoint, 'PATCH'))
+                this.add(`${name}/:id`, this.map(endpoint, 'DELETE'))
+                break
             default:
-            this.data[`${name}|${endpoint.method}`] = endpoint
+                this.data[`${name}|${endpoint.method}`] = endpoint
         }
-        
+
     }
 
-    handlesEndpoint(resource: string): boolean  {
-        return Object.keys(this.data).filter(i => { i === resource }).length === 1 
+    handlesEndpoint(resource: string): boolean {
+        return Object.keys(this.data).filter(i => { i === resource }).length === 1
     }
 
     getEndpoints(): { resourcePath: string, endpoint: DQLEndpoint }[] {
@@ -75,7 +75,7 @@ export class DQLEndpointManager {
      * @returns {{ [id: string]: any }}
      * @memberof BodyDQL
      */
-    loadFile(): { [id: string]: any } { 
+    loadFile(): { [id: string]: any } {
         this.data = {
             "/app": {
                 body: {
@@ -153,7 +153,7 @@ export class DQLEndpointManager {
 
             const endPointData = this.data[endPoint]
 
-            if(endPointData.method === 'GET' ) return
+            if (endPointData.method === 'GET') return
 
             if (endPointData.body === undefined || endPointData.body === null) {
                 throw new Error('all endpoints must contain a body property')
@@ -256,10 +256,10 @@ export class DQLEndpointManager {
 
     }
 
-    catchParse(value: any , p: (v: any) => any): any {
+    catchParse(value: any, p: (v: any) => any): any {
         try {
             return p(value)
-        }catch(error) {
+        } catch (error) {
             return value
         }
     }
@@ -274,10 +274,10 @@ export class DQLEndpointManager {
      */
     validateEndpointTypesMatch(property: DQLEndpointProperty, value: any): Error[] {
         let errors: Error[] = []
-       
-        const parse = property.parse === undefined ? (i: any) => { return i } : property.parse! 
 
-        const parsedValue = this.catchParse(value , parse)
+        const parse = property.parse === undefined ? (i: any) => { return i } : property.parse!
+
+        const parsedValue = this.catchParse(value, parse)
 
         switch (property.type) {
             case 'boolean':
@@ -289,15 +289,15 @@ export class DQLEndpointManager {
                 if (!isnumber(parsedValue)) {
                     errors.push(new Error('value is not a number'))
                 }
-                break; 
+                break;
             case 'string':
-                
+
                 if (isboolean(parsedValue)) {
                     errors.push(new Error('value is boolean and not a string'))
-                } 
+                }
                 if (!isstring(parsedValue)) {
                     errors.push(new Error('value is not a string'))
-                }   
+                }
                 break;
             default: break
         }

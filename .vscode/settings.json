@@ -10,5 +10,14 @@
         ".gitignore" : false
     },
     "editor.fontSize": 12,
-    "files.autoSave": "onWindowChange"
+    "files.autoSave": "onWindowChange",
+    "javascript.format.insertSpaceAfterConstructor": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "javascript.referencesCodeLens.enabled": true,
+    "javascript.suggest.completeFunctionCalls": true,
+    "typescript.format.insertSpaceAfterConstructor": true
 }

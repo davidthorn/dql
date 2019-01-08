@@ -1,4 +1,4 @@
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'REST' 
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'REST'
 export type AuthenticationScheme = 'Basic' | 'Bearer' | 'FBAuth'
 
 export type AuthorizatonType = 'Basic' | 'Bearer'
@@ -7,7 +7,6 @@ export interface BasicAuthentication {
     user: string
     password: string
 }
-
 
 export interface DQLAuthentication {
 
@@ -18,7 +17,6 @@ export interface DQLAuthentication {
      * @memberof DQLAuthentication
      */
     name: string
-
 
     /**
      * The scheme type in of the authentication
@@ -47,7 +45,7 @@ export interface DQLAuthentication {
      * @memberof DQLAuthentication
      */
     resourcePath: RegExp | string
-    
+
     /**
      * The Http Methods which are exempt from authentication
      *
@@ -58,14 +56,6 @@ export interface DQLAuthentication {
 
     basic?: BasicAuthentication
 
-    firebaseAuth?: {  }
+    firebaseAuth?: {}
 
-}
-
-const peopleAuthentication: DQLAuthentication = {
-    name: 'people',
-    scheme: 'Bearer',
-    priority: 1000,
-    allowedMethod: [ 'GET' ],
-    resourcePath: '/people'
 }

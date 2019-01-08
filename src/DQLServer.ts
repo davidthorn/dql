@@ -27,7 +27,7 @@ export class DQLServer {
 
     authManager: DQLAuthenticationManager
 
-    constructor() {
+    constructor () {
         this.endpoints = new DQLEndpointManager()
         this.authManager = new DQLAuthenticationManager()
         this.server = e()
@@ -117,19 +117,19 @@ export class DQLServer {
         const url = this.convertUrl(request.originalUrl, request.params)
         fs.appendFileSync(path.join(process.cwd(), 'handleMethodNotAllowed.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
 
-        const resources = this.endpoints.getEndpoints().filter(i => { 
-            const regMatch = i.resourcePath.replace(/:[\w\d]+/ , '[^\/]+')
-            const match = url.match(new RegExp(regMatch , 'g'))
-            if(match === null) return false
-            if(match[0] === url) return true
+        const resources = this.endpoints.getEndpoints().filter(i => {
+            const regMatch = i.resourcePath.replace(/:[\w\d]+/, '[^\/]+')
+            const match = url.match(new RegExp(regMatch, 'g'))
+            if (match === null) return false
+            if (match[0] === url) return true
             return false
         })
 
-        if(resources.length > 0) {
+        if (resources.length > 0) {
             /// 405
             const methods = resources.map(i => { return i.endpoint })
 
-            response.set('Allow' , methods.map(i => { return i.method }).join(','))
+            response.set('Allow', methods.map(i => { return i.method }).join(','))
 
             response.status(405).send({
                 statusCode: 405,
@@ -145,7 +145,7 @@ export class DQLServer {
                 message: 'Not Found',
                 resourcePath: request.originalUrl,
                 method: request.method
-          })
+            })
         }
     }
 
@@ -197,15 +197,13 @@ export class DQLServer {
      */
     listen() {
 
-        
         this.handleLogging()
         this.server.use(this.authManager.authenticate.bind(this.authManager))
         this.server.use(bodyParser.urlencoded({ extended: true }))
         this.server.use(bodyParser.json({}))
 
-        
-        this.server.use((error: Error , request: Request , response: Response , next: () => void) => {
-            if (error instanceof SyntaxError)  {
+        this.server.use((error: Error, request: Request, response: Response, next: () => void) => {
+            if (error instanceof SyntaxError) {
                 response.status(400).send({
                     method: request.method,
                     resourcePath: request.originalUrl,
@@ -214,13 +212,13 @@ export class DQLServer {
                 })
                 return
             }
-            
+
             response.status(500).send();
         })
 
         this.endpoints.getEndpoints().forEach(data => {
 
-            if(data.endpoint.env !== undefined) {
+            if (data.endpoint.env !== undefined) {
                 Object.keys(data.endpoint.env).forEach(key => {
                     data.endpoint.env![key] = process.env[key]
                 })
@@ -258,10 +256,8 @@ export class DQLServer {
             }
         })
 
-        
+
         this.server.use(this.handleMethodNotAllowed.bind(this))
-
-
 
         this.server.listen(this.port || 3000, this.host || 'localhost', () => {
             console.log('listening')
