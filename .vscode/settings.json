@@ -4,7 +4,7 @@
         "**/*.js": true,
         "**/*.d.ts": true,
         "test/": false,
-        "node_modules": true,
+        "node_modules": false,
         "LICENSE" : true,
         "README.md": true,
         ".gitignore" : false

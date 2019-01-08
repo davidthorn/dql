@@ -43,7 +43,7 @@ export class PeopleEndpointUnitTest {
 
     }
 
-    @test "GET /people/index.html 401" () {
+    @test "GET /people/index.html 401" () { 
 
         chai.request(this.host)
         .get('/people/index.html')
