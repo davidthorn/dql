@@ -1,12 +1,15 @@
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'REST' 
-type AuthenticationScheme = 'Basic' | 'Bearer'
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'REST' 
+export type AuthenticationScheme = 'Basic' | 'Bearer' | 'FBAuth'
 
-interface BasicAuthentication {
+export type AuthorizatonType = 'Basic' | 'Bearer'
+
+export interface BasicAuthentication {
     user: string
     password: string
 }
 
-interface DQLAuthentication {
+
+export interface DQLAuthentication {
 
     /**
      * The name which a DQLEndpoint can reference this by when required in the future
@@ -24,7 +27,6 @@ interface DQLAuthentication {
      * @memberof DQLAuthentication
      */
     scheme: AuthenticationScheme
-    
 
     /**
      * The authentications will be carried out in the order of priority
@@ -55,6 +57,8 @@ interface DQLAuthentication {
     allowedMethod: HttpMethod[]
 
     basic?: BasicAuthentication
+
+    firebaseAuth?: any
 
 }
 

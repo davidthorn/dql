@@ -35,6 +35,7 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
+    "djt-firebase-auth": "^0.1.0",
     "express": "^4.16.4",
     "lodash.isboolean": "^3.0.3",
     "lodash.isnumber": "^3.0.3",

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
+import { AuthorizatonType, DQLAuthentication, HttpMethod, AuthenticationScheme, BasicAuthentication } from './DQLAuthentication';
 
 export default class DQLAuthenticationManager {
 
@@ -41,6 +42,18 @@ export default class DQLAuthenticationManager {
 
             const auth = auths[0]
             switch (auth.scheme) {
+                case 'FBAuth':
+                if(auth.firebaseAuth !== undefined) {
+                    this.handleFirebaseAuth(auth, auth.firebaseAuth , request, response, next)
+                } else {
+                    response.status(401).send({
+                        method: request.method,
+                        statusCode: 500,
+                        message: 'Internal Server Error (Firebase Auth information required)',
+                        scheme: 'FirebaseAuth'
+                    })
+                }
+                break;
                 case 'Basic':
                     if(auth.basic !== undefined) {
                         this.handleBasic(auth, auth.basic , request, response, next)
@@ -92,9 +105,35 @@ export default class DQLAuthenticationManager {
      */
     retrieveBasicAuthenticationInfo(authorizationHeader?: string): { user: string , password: string } | undefined {
         
-        if(authorizationHeader === undefined) return undefined
+        const data = this.retrieveAuthenticationInfo('Basic' , authorizationHeader)
 
-        const result = authorizationHeader.match(/Basic\s*([^\s]+)/)
+        if(data === undefined ) return undefined
+
+        const credentialsData = Buffer.from(data.token.trim(), 'base64').toString()
+        const credentials = credentialsData.split(':')
+
+        if(credentials.length < 2) return undefined
+        
+        return {
+            user: credentials.shift()!,
+            password: credentials.join(':')
+        }
+    }
+
+
+    /**
+     * Returns the user and password when the authorization header contains valid basic auth information
+     * Returns false in all other situations
+     *
+     * @param {string} [authorizationHeader]
+     * @returns {({ user: string , password: string } | undefined)}
+     * @memberof DQLAuthenticationManager
+     */
+    retrieveAuthenticationInfo(type: AuthorizatonType , authorizationHeader?: string,): { token : string } | undefined {
+        
+        if(authorizationHeader === undefined) return undefined
+        
+        const result = type === 'Bearer' ? authorizationHeader.match(/Bearer\s*([^\s]+)/) : authorizationHeader.match(/Basic\s*([^\s]+)/) 
         
         if(result === null) return undefined
 
@@ -104,14 +143,8 @@ export default class DQLAuthenticationManager {
 
         if(data === undefined) return undefined
 
-        const credentialsData = Buffer.from(data.trim(), 'base64').toString()
-        const credentials = credentialsData.split(':')
-
-        if(credentials.length < 2) return undefined
-        
         return {
-            user: credentials.shift()!,
-            password: credentials.join(':')
+           token: data
         }
     }
 
@@ -130,7 +163,7 @@ export default class DQLAuthenticationManager {
             case true:
             next()
             break;
-            case false:
+            case false: 
                 response.status(401).send({
                     method: request.method,
                     statusCode: 401,
@@ -153,6 +186,31 @@ export default class DQLAuthenticationManager {
         const source = resourcePath instanceof RegExp ? resourcePath.source : `${resourcePath.split('/').join('\\/')}`
         const reg = new RegExp(source)
         return originalUrl.match(reg.source) !== null
+    }
+
+    public handleFirebaseAuth(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
+        
+        let authorized: boolean = false
+    
+        const data = this.retrieveAuthenticationInfo( 'Bearer',  request.headers.authorization)
+        
+        if(data !== undefined) {
+            authorized = data.token === 'auth-token'
+        } 
+
+        switch (authorized) {
+            case true:
+            next()
+            break;
+            case false: 
+                response.status(401).send({
+                    method: request.method,
+                    statusCode: 401,
+                    message: 'Unauthorized',
+                    scheme: 'FirebaseAuth'
+                })
+        }
+       
     }
 
 }

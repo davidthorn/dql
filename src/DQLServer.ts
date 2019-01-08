@@ -7,6 +7,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { request } from 'https';
 import DQLAuthenticationManager from './DQLAuthenticationManager';
+import { DQLAuthentication } from './DQLAuthentication';
 
 export class DQLServer {
 
