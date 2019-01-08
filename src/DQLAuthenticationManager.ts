@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
 import { AuthorizatonType, DQLAuthentication, HttpMethod, AuthenticationScheme, BasicAuthentication } from './DQLAuthentication';
+import { firebaseVerifyAuthToken } from './firebase-auth'
 
 export default class DQLAuthenticationManager {
 
@@ -190,27 +191,28 @@ export default class DQLAuthenticationManager {
 
     public handleFirebaseAuth(auth: DQLAuthentication, basic: BasicAuthentication , request: Request, response: Response, next: () => void) {
         
-        let authorized: boolean = false
-    
         const data = this.retrieveAuthenticationInfo( 'Bearer',  request.headers.authorization)
         
         if(data !== undefined) {
-            authorized = data.token === 'auth-token'
-        } 
-
-        switch (authorized) {
-            case true:
-            next()
-            break;
-            case false: 
+            firebaseVerifyAuthToken(data.token).then(data => {
+                next()
+            }).catch(error => {
                 response.status(401).send({
                     method: request.method,
                     statusCode: 401,
                     message: 'Unauthorized',
                     scheme: 'FirebaseAuth'
                 })
+            })
+
+        } else {
+            response.status(401).send({
+                method: request.method,
+                statusCode: 401,
+                message: 'Unauthorized',
+                scheme: 'FirebaseAuth'
+            })
         }
-       
     }
 
 }
