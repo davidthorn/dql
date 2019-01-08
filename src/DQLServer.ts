@@ -136,7 +136,7 @@ export class DQLServer {
                 message: 'Method Not Allowed',
                 resourcePath: request.originalUrl,
                 method: request.method,
-                methodsAllowed: methods,
+                methodsAllowed: methods.map(i => { return i.method }),
             })
         } else {
             // 404
