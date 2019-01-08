@@ -1,5 +1,7 @@
 import staticContent from './endpoints/static-content'
 import people from './endpoints/people'
+import login from './endpoints/login'
+import app from './endpoints/app'
 import DQLServer from './src/DQLServer'
 
 const server = new DQLServer()
@@ -10,6 +12,17 @@ server.addAuthentication({
     allowedMethod: [],
     name: 'bearer',
     priority: 1
+})
+
+server.addAuthentication({
+    scheme: 'FBAuth',
+    resourcePath: /\/app/,
+    allowedMethod: [],
+    name: 'bearer',
+    priority: 1,
+    firebaseAuth: {
+        
+    }
 })
 
 server.addAuthentication({
@@ -25,6 +38,8 @@ server.addAuthentication({
 })
 
 server.add(staticContent.resourcePath , staticContent.endpoint)
+server.add(login.resourcePath , login.endpoint)
 server.add(people.resourcePath , people.endpoint)
+server.add(app.resourcePath , app.endpoint)
 
 server.listen()     

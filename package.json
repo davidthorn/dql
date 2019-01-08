@@ -49,26 +49,37 @@
   },
   "dependencies": {
     "@types/morgan": "^1.7.35",
-    "morgan": "^1.9.1"
+    "@types/node-fetch": "^2.1.4",
+    "djt-firebase-auth": "^0.3.0",
+    "morgan": "^1.9.1",
+    "node-fetch": "^2.3.0"
   },
   "nyc": {
-    "watermarks": {
-      "lines": [
-        20,
-        95
-      ],
-      "functions": [
-        20,
-        95
-      ],
-      "branches": [
-        20,
-        95
-      ],
-      "statements": [
-        20,
-        95
-      ]
+    "check-coverage": true,
+    "lines": 20,
+    "statements": 20,
+    "functions": 20,
+    "branches": 20,
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "test/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "all": true
+  },
+  "firebase": {
+    "mode": "prod",
+    "dev": {
+      "url": "localhost",
+      "port": 3002
+    },
+    "prod": {
+      "url": "https://www.googleapis.com"
     }
   }
 }
