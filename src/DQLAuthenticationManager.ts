@@ -1,7 +1,5 @@
 import { Request, Response } from 'express'
-import * as path from 'path'
-import * as fs from 'fs'
-import { AuthorizatonType, DQLAuthentication, HttpMethod, AuthenticationScheme, BasicAuthentication } from './DQLAuthentication';
+import { AuthorizatonType, DQLAuthentication, HttpMethod, BasicAuthentication } from './DQLAuthentication';
 import { firebaseVerifyAuthToken } from './firebase-auth'
 
 export default class DQLAuthenticationManager {

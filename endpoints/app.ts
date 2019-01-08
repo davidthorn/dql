@@ -12,7 +12,7 @@ const rootEndpoint: DQLEndpoint = {
     method: 'GET',
     resourcePath: '/app'
 }
-
+ 
 const personEndpoint = {
     resourcePath: rootEndpoint.resourcePath,
     endpoint: rootEndpoint

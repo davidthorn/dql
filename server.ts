@@ -1,7 +1,7 @@
 import staticContent from './endpoints/static-content'
 import people from './endpoints/people'
-import login from './endpoints/login'
 import app from './endpoints/app'
+import login from './endpoints/login'
 import DQLServer from './src/DQLServer'
 
 const server = new DQLServer()
