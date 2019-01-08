@@ -69,7 +69,7 @@ export class LoginEndpointUnitTest {
             expect(res.body.error.message).to.equal('EMAIL_NOT_FOUND')
             expect(res.body.error.errors).to.not.undefined
             expect(res.status).to.be.equal(400)
-        })
+        }) 
 
     }
 

@@ -2,6 +2,7 @@ import staticContent from './endpoints/static-content'
 import people from './endpoints/people'
 import app from './endpoints/app'
 import login from './endpoints/login'
+import register from './endpoints/register'
 import DQLServer from './src/DQLServer'
 
 const server = new DQLServer()
@@ -41,5 +42,6 @@ server.add(staticContent.resourcePath , staticContent.endpoint)
 server.add(login.resourcePath , login.endpoint)
 server.add(people.resourcePath , people.endpoint)
 server.add(app.resourcePath , app.endpoint)
+server.add(register.resourcePath , register.endpoint)
 
 server.listen()     
