@@ -22,22 +22,22 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/129</span>
+        <span class='fraction'>0/133</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/67</span>
+        <span class='fraction'>0/69</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/24</span>
+        <span class='fraction'>0/26</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/122</span>
+        <span class='fraction'>0/126</span>
       </div>
     </div>
     <p class="quiet">
@@ -323,7 +323,12 @@
 <a name='L275'></a><a href='#L275'>275</a>
 <a name='L276'></a><a href='#L276'>276</a>
 <a name='L277'></a><a href='#L277'>277</a>
-<a name='L278'></a><a href='#L278'>278</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -439,7 +444,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -514,7 +519,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -716,7 +726,7 @@ class DQLServer {
                 message: 'Method Not Allowed',
                 resourcePath: request.originalUrl,
                 method: request.method,
-                methodsAllowed: methods,
+                methodsAllowed: methods.map(<span class="fstat-no" title="function not covered" >i </span>=&gt; { <span class="cstat-no" title="statement not covered" >return i.method; </span>}),
             });
         }
         else {
@@ -792,32 +802,37 @@ class DQLServer {
 <span class="cstat-no" title="statement not covered" >            response.status(500).send();</span>
         });
 <span class="cstat-no" title="statement not covered" >        this.endpoints.getEndpoints().forEach(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if (data.endpoint.env !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >                Object.keys(data.endpoint.env).forEach(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    data.endpoint.env[key] = process.env[key];</span>
+                });
+            }
             const { resourcePath, endpoint } = <span class="cstat-no" title="statement not covered" >data;</span>
             const { middleware } = <span class="cstat-no" title="statement not covered" >endpoint;</span>
             const method = <span class="cstat-no" title="statement not covered" >data.endpoint.method;</span>
 <span class="cstat-no" title="statement not covered" >            if (middleware !== undefined) {</span>
 <span class="cstat-no" title="statement not covered" >                switch (method) {</span>
                     case 'GET':
-<span class="cstat-no" title="statement not covered" >                        this.server.get(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.get(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     case 'DELETE':
 <span class="cstat-no" title="statement not covered" >                        this.server.delete(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.delete(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.delete(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     case 'PATCH':
 <span class="cstat-no" title="statement not covered" >                        this.server.patch(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.patch(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.patch(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     case 'PUT':
 <span class="cstat-no" title="statement not covered" >                        this.server.put(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.put(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.put(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     case 'POST':
 <span class="cstat-no" title="statement not covered" >                        this.server.post(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.post(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.post(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     case 'HEAD':
-<span class="cstat-no" title="statement not covered" >                        this.server.head(resourcePath, middleware);</span>
+<span class="cstat-no" title="statement not covered" >                        this.server.head(resourcePath, middleware.bind(data.endpoint));</span>
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                 }
             }
@@ -883,7 +898,7 @@ class DQLServer {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Jan 08 2019 21:05:28 GMT+0100 (CET)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 10 2019 20:12:30 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
