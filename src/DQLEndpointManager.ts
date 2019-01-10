@@ -1,8 +1,7 @@
-import isboolean from 'lodash.isboolean'
-import isnumber from 'lodash.isnumber'
-import isstring from 'lodash.isstring'
 import { DQLEndpointProperty } from './DQLEndpointProperty';
 import { DQLEndpoint } from './DQLEndpoint';
+import { isBoolean, isNumber,isString } from './PropertyValidators';
+import isboolean from 'lodash.isboolean'
 
 export class DQLEndpointManager {
 
@@ -281,23 +280,13 @@ export class DQLEndpointManager {
 
         switch (property.type) {
             case 'boolean':
-                if (!isboolean(parsedValue)) {
-                    errors.push(new Error('value is not boolean'))
-                }
+                errors = isBoolean(parsedValue, errors);
                 break;
             case 'number':
-                if (!isnumber(parsedValue)) {
-                    errors.push(new Error('value is not a number'))
-                }
+                errors = isNumber(parsedValue, errors);
                 break;
             case 'string':
-
-                if (isboolean(parsedValue)) {
-                    errors.push(new Error('value is boolean and not a string'))
-                }
-                if (!isstring(parsedValue)) {
-                    errors.push(new Error('value is not a string'))
-                }
+                errors = isString(parsedValue, errors);
                 break;
             default: break
         }
@@ -382,3 +371,7 @@ export class DQLEndpointManager {
     }
 
 }
+
+
+
+

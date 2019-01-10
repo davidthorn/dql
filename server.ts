@@ -8,11 +8,15 @@ import DQLServer from './src/DQLServer'
 const server = new DQLServer()
 
 server.addAuthentication({
-    scheme: 'Bearer',
+    scheme: 'Basic',
     resourcePath: /\/people\/([\d]+)/,
     allowedMethod: [],
     name: 'bearer',
-    priority: 1
+    priority: 1,
+    basic : {
+        user: 'david',
+        password: '123456' 
+    }
 })
 
 server.addAuthentication({
