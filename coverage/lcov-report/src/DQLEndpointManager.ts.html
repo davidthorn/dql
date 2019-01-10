@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">68.38% </span>
+        <span class="strong">68.47% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>80/117</span>
+        <span class='fraction'>76/111</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">72.6% </span>
+        <span class="strong">72.31% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>53/73</span>
+        <span class='fraction'>47/65</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">63.33% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>19/30</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70.27% </span>
+        <span class="strong">70.48% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>78/111</span>
+        <span class='fraction'>74/105</span>
       </div>
     </div>
     <p class="quiet">
@@ -423,17 +423,10 @@
 <a name='L375'></a><a href='#L375'>375</a>
 <a name='L376'></a><a href='#L376'>376</a>
 <a name='L377'></a><a href='#L377'>377</a>
-<a name='L378'></a><a href='#L378'>378</a>
-<a name='L379'></a><a href='#L379'>379</a>
-<a name='L380'></a><a href='#L380'>380</a>
-<a name='L381'></a><a href='#L381'>381</a>
-<a name='L382'></a><a href='#L382'>382</a>
-<a name='L383'></a><a href='#L383'>383</a>
-<a name='L384'></a><a href='#L384'>384</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L378'></a><a href='#L378'>378</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -713,22 +706,12 @@
 <span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">17x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -812,11 +795,15 @@
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import isboolean from 'lodash.isboolean'
-import isnumber from 'lodash.isnumber'
-import isstring from 'lodash.isstring'
-import { DQLEndpointProperty } from './DQLEndpointProperty';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { DQLEndpointProperty } from './DQLEndpointProperty';
 import { DQLEndpoint } from './DQLEndpoint';
+import { isBoolean, isNumber,isString } from './PropertyValidators';
+import isboolean from 'lodash.isboolean'
 &nbsp;
 export class DQLEndpointManager {
 &nbsp;
@@ -828,46 +815,46 @@ export class DQLEndpointManager {
      */
     data: { [id: string]: DQLEndpoint }
 &nbsp;
-    constructor() {
+    constructor () {
         this.data = {}
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    map</span>(endpoint: DQLEndpoint , method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): DQLEndpoint {
+<span class="fstat-no" title="function not covered" >    map</span>(endpoint: DQLEndpoint, method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'): DQLEndpoint {
         let d = <span class="cstat-no" title="statement not covered" >Object.create(endpoint)</span>
 <span class="cstat-no" title="statement not covered" >        d.method = method</span>
-<span class="cstat-no" title="statement not covered" >        switch(method) {</span>
+<span class="cstat-no" title="statement not covered" >        switch (method) {</span>
             case 'GET':
-<span class="cstat-no" title="statement not covered" >            d.path = `${endpoint.resourcePath}`</span>
-<span class="cstat-no" title="statement not covered" >            break;</span>
+<span class="cstat-no" title="statement not covered" >                d.path = `${endpoint.resourcePath}`</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
             case 'POST':
-<span class="cstat-no" title="statement not covered" >            d.path = `${endpoint.resourcePath}`</span>
-<span class="cstat-no" title="statement not covered" >            break;</span>
+<span class="cstat-no" title="statement not covered" >                d.path = `${endpoint.resourcePath}`</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
             default:
-<span class="cstat-no" title="statement not covered" >            d.path = `${endpoint.resourcePath}/:id`</span>
-<span class="cstat-no" title="statement not covered" >            break;</span>
+<span class="cstat-no" title="statement not covered" >                d.path = `${endpoint.resourcePath}/:id`</span>
+<span class="cstat-no" title="statement not covered" >                break;</span>
         }
-        
+&nbsp;
 <span class="cstat-no" title="statement not covered" >        return d</span>
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    add</span>(name: string, endpoint: DQLEndpoint) {
-        
-<span class="cstat-no" title="statement not covered" >        switch(endpoint.method) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        switch (endpoint.method) {</span>
             case 'REST':
-<span class="cstat-no" title="statement not covered" >            this.add(name , this.map(endpoint , 'GET'))</span>
-<span class="cstat-no" title="statement not covered" >            this.add(name , this.map(endpoint , 'POST'))</span>
-<span class="cstat-no" title="statement not covered" >            this.add(`${name}/:id` , this.map(endpoint , 'PUT'))</span>
-<span class="cstat-no" title="statement not covered" >            this.add(`${name}/:id` , this.map(endpoint , 'PATCH'))</span>
-<span class="cstat-no" title="statement not covered" >            this.add(`${name}/:id` , this.map(endpoint , 'DELETE'))</span>
-<span class="cstat-no" title="statement not covered" >            break</span>
+<span class="cstat-no" title="statement not covered" >                this.add(name, this.map(endpoint, 'GET'))</span>
+<span class="cstat-no" title="statement not covered" >                this.add(name, this.map(endpoint, 'POST'))</span>
+<span class="cstat-no" title="statement not covered" >                this.add(`${name}/:id`, this.map(endpoint, 'PUT'))</span>
+<span class="cstat-no" title="statement not covered" >                this.add(`${name}/:id`, this.map(endpoint, 'PATCH'))</span>
+<span class="cstat-no" title="statement not covered" >                this.add(`${name}/:id`, this.map(endpoint, 'DELETE'))</span>
+<span class="cstat-no" title="statement not covered" >                break</span>
             default:
-<span class="cstat-no" title="statement not covered" >            this.data[`${name}|${endpoint.method}`] = endpoint</span>
+<span class="cstat-no" title="statement not covered" >                this.data[`${name}|${endpoint.method}`] = endpoint</span>
         }
-        
+&nbsp;
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    handlesEndpoint</span>(resource: string): boolean  {
-<span class="cstat-no" title="statement not covered" >        return Object.keys(this.data).filter(<span class="fstat-no" title="function not covered" >i </span>=&gt; { <span class="cstat-no" title="statement not covered" >i === resource </span>}).length === 1 </span>
+<span class="fstat-no" title="function not covered" >    handlesEndpoint</span>(resource: string): boolean {
+<span class="cstat-no" title="statement not covered" >        return Object.keys(this.data).filter(<span class="fstat-no" title="function not covered" >i </span>=&gt; { <span class="cstat-no" title="statement not covered" >i === resource </span>}).length === 1</span>
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    getEndpoints</span>(): { resourcePath: string, endpoint: DQLEndpoint }[] {
@@ -889,7 +876,7 @@ export class DQLEndpointManager {
      * @returns {{ [id: string]: any }}
      * @memberof BodyDQL
      */
-    loadFile(): { [id: string]: any } { 
+    loadFile(): { [id: string]: any } {
         this.data = {
             "/app": {
                 body: {
@@ -967,7 +954,7 @@ export class DQLEndpointManager {
 &nbsp;
             const endPointData = this.data[endPoint]
 &nbsp;
-            <span class="missing-if-branch" title="if path not taken" >I</span>if(endPointData.method === 'GET' ) <span class="cstat-no" title="statement not covered" >return</span>
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (endPointData.method === 'GET') <span class="cstat-no" title="statement not covered" >return</span>
 &nbsp;
             <span class="missing-if-branch" title="if path not taken" >I</span>if (endPointData.body === undefined || endPointData.body === null) {
 <span class="cstat-no" title="statement not covered" >                throw new Error('all endpoints must contain a body property')</span>
@@ -1070,10 +1057,10 @@ export class DQLEndpointManager {
 &nbsp;
     }
 &nbsp;
-    catchParse(value: any , p: (v: any) =&gt; any): any {
+    catchParse(value: any, p: (v: any) =&gt; any): any {
         try {
             return p(value)
-        }catch(error) {
+        } catch (error) {
 <span class="cstat-no" title="statement not covered" >            return value</span>
         }
     }
@@ -1088,30 +1075,20 @@ export class DQLEndpointManager {
      */
     validateEndpointTypesMatch(property: DQLEndpointProperty, value: any): Error[] {
         let errors: Error[] = []
-       
-        const parse = property.parse === undefined ? (i: any) =&gt; { return i } : <span class="branch-1 cbranch-no" title="branch not covered" >property.parse! </span>
 &nbsp;
-        const parsedValue = this.catchParse(value , parse)
+        const parse = property.parse === undefined ? (i: any) =&gt; { return i } : <span class="branch-1 cbranch-no" title="branch not covered" >property.parse!</span>
+&nbsp;
+        const parsedValue = this.catchParse(value, parse)
 &nbsp;
         switch (property.type) {
             case 'boolean':
-                if (!isboolean(parsedValue)) {
-                    errors.push(new Error('value is not boolean'))
-                }
+                errors = isBoolean(parsedValue, errors);
                 break;
             case 'number':
-                if (!isnumber(parsedValue)) {
-                    errors.push(new Error('value is not a number'))
-                }
-                break; 
+                errors = isNumber(parsedValue, errors);
+                break;
             case 'string':
-                
-                <span class="missing-if-branch" title="if path not taken" >I</span>if (isboolean(parsedValue)) {
-<span class="cstat-no" title="statement not covered" >                    errors.push(new Error('value is boolean and not a string'))</span>
-                } 
-                <span class="missing-if-branch" title="if path not taken" >I</span>if (!isstring(parsedValue)) {
-<span class="cstat-no" title="statement not covered" >                    errors.push(new Error('value is not a string'))</span>
-                }   
+                errors = isString(parsedValue, errors);
                 break;
 <span class="branch-3 cbranch-no" title="branch not covered" >            default: <span class="cstat-no" title="statement not covered" >break</span></span>
         }
@@ -1195,13 +1172,18 @@ export class DQLEndpointManager {
         return []
     }
 &nbsp;
-}</pre></td></tr>
+}
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Jan 08 2019 21:05:28 GMT+0100 (CET)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 10 2019 20:12:30 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
