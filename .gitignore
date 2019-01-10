@@ -6,3 +6,4 @@ test/**/*.d.ts
 *.d.ts
 *.log
 .nyc_output
+post
