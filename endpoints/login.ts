@@ -43,7 +43,7 @@ const login: DQLEndpoint = {
             },
             returnSecureToken: true,
             API_KEY: this.env.API_KEY
-        }).catch(error => {
+        }).catch((error: any) => {
             response.status(error.error.code).send(error)
         })
 
