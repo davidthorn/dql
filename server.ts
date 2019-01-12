@@ -47,5 +47,12 @@ server.add(login.resourcePath , login.endpoint)
 server.add(people.resourcePath , people.endpoint)
 server.add(app.resourcePath , app.endpoint)
 server.add(register.resourcePath , register.endpoint)
+server.host = process.env.HOST
+server.port = parseInt(process.env.PORT || '3000') 
 
-server.listen()     
+console.log({
+    host: server.host || 'not set',
+    port: server.port || 'not set'
+})
+
+server.listen()       
