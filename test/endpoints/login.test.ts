@@ -8,9 +8,9 @@ chai.use(require('chai-http'));
 @suite('Login Endpoint')
 export class LoginEndpointUnitTest {
 
-    host: string = 'localhost:3000'
+    host: string = '127.0.0.1:3000'
 
-    @test "POST /login 200" () {
+    @test "POST /login 200" () { 
        
         chai.request(this.host)
         .post('/login')
@@ -18,7 +18,7 @@ export class LoginEndpointUnitTest {
         .send({
             email: process.env.EMAIL,
             password: process.env.PASSWORD
-        })
+        }) 
         .end((error, res) => {
             expect(res.body.kind).to.not.undefined
             expect(res.body.localId).to.not.undefined
