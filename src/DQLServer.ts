@@ -1,13 +1,12 @@
-import { DQLEndpoint } from './DQLEndpoint'
-import e, { Response, Request } from 'express'
+import e, { Request, Response } from 'express';
+import * as fs from 'fs';
+import morgan from 'morgan';
+import * as path from 'path';
+import { DQLAuthentication } from './DQLAuthentication';
+import DQLAuthenticationManager from './DQLAuthenticationManager';
+import { DQLEndpoint } from './DQLEndpoint';
 import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
-import morgan from 'morgan'
-import * as fs from 'fs'
-import * as path from 'path'
-import { request } from 'https';
-import DQLAuthenticationManager from './DQLAuthenticationManager';
-import { DQLAuthentication } from './DQLAuthentication';
 
 export class DQLServer {
 
@@ -234,7 +233,7 @@ export class DQLServer {
             const { resourcePath, endpoint } = data
             const { middleware } = endpoint
             const method = data.endpoint.method
-            if (middleware !== undefined) {
+            if (middleware !== undefined ) {
                 
                 const endpoints = typeof middleware === 'function' ? [middleware] : middleware 
 
@@ -265,7 +264,7 @@ export class DQLServer {
                     }
                 })
                 
-            }
+            } 
         })
 
 
