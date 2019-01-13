@@ -3,14 +3,13 @@
 
 
 import chai,{expect} from 'chai'
+import { BaseEndpointUnitTest } from './base.test';
 chai.use(require('chai-http'));
 
 @suite('People Endpoint')
-export class PeopleEndpointUnitTest {
+export class PeopleEndpointUnitTest extends BaseEndpointUnitTest {
 
-    host: string = 'localhost:3000'
-
-    @test "POST /people 200" () {
+    @test "POST /people 201" () {
 
         chai.request(this.host)
         .post('/people')
@@ -20,10 +19,10 @@ export class PeopleEndpointUnitTest {
             name: 'david',
             surname: 'thorn',
             age: 40,
-            dob: '22 12 1978'
+            dob: '22-12-78'
         })
         .end((error, res) => {
-            expect(res.status).to.be.equal(200)
+            expect(res.status).to.be.equal(201)
         })
 
     }
@@ -63,9 +62,10 @@ export class PeopleEndpointUnitTest {
             name: 'david',
             surname: 'thorn',
             age: 40,
-            dob: '22 12 1978'
+            dob: '22-12-1978'
         })
         .end((error, res) => {
+            
             expect(res.status).to.be.equal(200)
         }) 
 

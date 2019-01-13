@@ -15,12 +15,61 @@ const rootEndpoint: DQLEndpoint = {
     resourcePath: '/people'
 }
 
+const deleteMethod =  (request: Request, response: Response, next: NextFunction): any => {
+    if(request.method !== 'DELETE') {
+        return next()
+    }
+
+    response.status(200).send({
+        message: "deleted"
+    })
+}
+
+const getMethod =  (request: Request, response: Response, next: NextFunction): any => {
+    if(request.method !== 'GET') {
+        return next()
+    }
+
+    response.status(200).send({
+        message: "get all"
+    })
+}
+
+const postMethod =  (request: Request, response: Response, next: NextFunction): any => {
+    if(request.method !== 'POST') {
+        return next()
+    }
+
+    response.status(201).send({
+        message: "post one"
+    })
+}
+
+const patchMethod =  (request: Request, response: Response, next: NextFunction): any => {
+    if(request.method !== 'PATCH') {
+        return next()
+    }
+ 
+    response.status(200).send({
+        message: "patched one"
+    })
+}
+
+const putMethod =  (request: Request, response: Response, next: NextFunction): any => {
+    if(request.method !== 'PUT') { 
+        return next()
+    }
+
+    response.status(200).send({
+        message: "put one"
+    })
+}
 
 
-const validation = (request: Request, res: Response, next: NextFunction) => {
+const validation = (request: Request, response: Response, next: NextFunction): any => {
 
     const { error  } = joi.object({
-        name: joi.string().min(6).max(10).regex(/[\d]+/).required(),
+        name: joi.string().required(),
         surname: joi.string().required(),
         age: joi.number().integer().required(),
         dob:  joi.string().regex(/^[\d]{2,4}[-\.]{1}[\d]{2,4}[-\.]{1}[\d]{2,4}$/).required()
@@ -45,20 +94,24 @@ const validation = (request: Request, res: Response, next: NextFunction) => {
             return c
         }, o)
 
-        res.status(400).send({ errors: reduced })
+        response.status(400).send({ errors: reduced })
     }
 
 }
 
-const success = (req: Request, res: Response) => {
-    res.status(200).send({
+const success = (req: Request, response: Response) => {
+    response.status(200).send({
         message: 'all good'
     })
 }
 
 rootEndpoint.middleware = [
+    getMethod,
+    deleteMethod,
     validation,
-    success
+    postMethod,
+    putMethod,
+    patchMethod
 ]
 
 const personEndpoint = {

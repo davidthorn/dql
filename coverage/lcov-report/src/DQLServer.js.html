@@ -22,22 +22,22 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/133</span>
+        <span class='fraction'>0/137</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/69</span>
+        <span class='fraction'>0/73</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/26</span>
+        <span class='fraction'>0/28</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/126</span>
+        <span class='fraction'>0/130</span>
       </div>
     </div>
     <p class="quiet">
@@ -328,7 +328,13 @@
 <a name='L280'></a><a href='#L280'>280</a>
 <a name='L281'></a><a href='#L281'>281</a>
 <a name='L282'></a><a href='#L282'>282</a>
-<a name='L283'></a><a href='#L283'>283</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -486,6 +492,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -530,6 +539,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -552,6 +563,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -767,7 +779,10 @@ class DQLServer {
 <span class="cstat-no" title="statement not covered" >                    throw new Error();</span>
 <span class="cstat-no" title="statement not covered" >                if (req.method !== endpoint.method)</span>
 <span class="cstat-no" title="statement not covered" >                    throw new Error();</span>
-<span class="cstat-no" title="statement not covered" >                endpoint.middleware(req, res, next);</span>
+                const endpoints = <span class="cstat-no" title="statement not covered" >typeof endpoint.middleware === 'function' ? [endpoint.middleware] : endpoint.middleware;</span>
+<span class="cstat-no" title="statement not covered" >                endpoints.forEach(<span class="fstat-no" title="function not covered" >mi</span>ddleware =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    middleware(req, res, next);</span>
+                });
             }
             catch (error) {
 <span class="cstat-no" title="statement not covered" >                res.status(404).send({</span>
@@ -811,30 +826,33 @@ class DQLServer {
             const { middleware } = <span class="cstat-no" title="statement not covered" >endpoint;</span>
             const method = <span class="cstat-no" title="statement not covered" >data.endpoint.method;</span>
 <span class="cstat-no" title="statement not covered" >            if (middleware !== undefined) {</span>
-<span class="cstat-no" title="statement not covered" >                switch (method) {</span>
-                    case 'GET':
-<span class="cstat-no" title="statement not covered" >                        this.server.get(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                    case 'DELETE':
-<span class="cstat-no" title="statement not covered" >                        this.server.delete(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.delete(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                    case 'PATCH':
-<span class="cstat-no" title="statement not covered" >                        this.server.patch(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.patch(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                    case 'PUT':
-<span class="cstat-no" title="statement not covered" >                        this.server.put(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.put(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                    case 'POST':
-<span class="cstat-no" title="statement not covered" >                        this.server.post(resourcePath, this.handleValidation.bind(this));</span>
-<span class="cstat-no" title="statement not covered" >                        this.server.post(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                    case 'HEAD':
-<span class="cstat-no" title="statement not covered" >                        this.server.head(resourcePath, middleware.bind(data.endpoint));</span>
-<span class="cstat-no" title="statement not covered" >                        break;</span>
-                }
+                const endpoints = <span class="cstat-no" title="statement not covered" >typeof middleware === 'function' ? [middleware] : middleware;</span>
+<span class="cstat-no" title="statement not covered" >                endpoints.forEach(<span class="fstat-no" title="function not covered" >mw</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                    switch (method) {</span>
+                        case 'GET':
+<span class="cstat-no" title="statement not covered" >                            this.server.get(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        case 'DELETE':
+<span class="cstat-no" title="statement not covered" >                            this.server.delete(resourcePath, this.handleValidation.bind(this));</span>
+<span class="cstat-no" title="statement not covered" >                            this.server.delete(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        case 'PATCH':
+<span class="cstat-no" title="statement not covered" >                            this.server.patch(resourcePath, this.handleValidation.bind(this));</span>
+<span class="cstat-no" title="statement not covered" >                            this.server.patch(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        case 'PUT':
+<span class="cstat-no" title="statement not covered" >                            this.server.put(resourcePath, this.handleValidation.bind(this));</span>
+<span class="cstat-no" title="statement not covered" >                            this.server.put(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        case 'POST':
+<span class="cstat-no" title="statement not covered" >                            this.server.post(resourcePath, this.handleValidation.bind(this));</span>
+<span class="cstat-no" title="statement not covered" >                            this.server.post(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                        case 'HEAD':
+<span class="cstat-no" title="statement not covered" >                            this.server.head(resourcePath, mw.bind(data.endpoint));</span>
+<span class="cstat-no" title="statement not covered" >                            break;</span>
+                    }
+                });
             }
         });
 <span class="cstat-no" title="statement not covered" >        this.server.use(this.handleMethodNotAllowed.bind(this));</span>
@@ -898,7 +916,7 @@ class DQLServer {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 10 2019 21:39:02 GMT+0100 (CET)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Jan 13 2019 11:12:27 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>
