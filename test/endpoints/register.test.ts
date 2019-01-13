@@ -2,13 +2,12 @@
 /// <reference path="../../node_modules/@types/chai-http/index.d.ts"/>
 
 
-import chai,{expect} from 'chai'
+import chai from 'chai';
+import { BaseEndpointUnitTest } from './base.test';
 chai.use(require('chai-http'));
 
 @suite('Register Endpoint')
-export class LoginEndpointUnitTest {
-
-    // host: string = 'localhost:3000'
+export class LoginEndpointUnitTest extends BaseEndpointUnitTest {
 
     // @test "POST /register 400" () {
        

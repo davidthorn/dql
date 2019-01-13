@@ -3,12 +3,11 @@
 
 
 import chai,{expect} from 'chai'
+import { BaseEndpointUnitTest } from './base.test';
 chai.use(require('chai-http'));
 
 @suite('Login Endpoint')
-export class LoginEndpointUnitTest {
-
-    host: string = '127.0.0.1:3000'
+export class LoginEndpointUnitTest  extends BaseEndpointUnitTest {
 
     @test "POST /login 200" () { 
        
@@ -73,29 +72,20 @@ export class LoginEndpointUnitTest {
 
     }
 
-    @test "POST /login 401 PASSWORD_LOGIN_DISABLED" () {
+    // @test "POST /login 401 PASSWORD_LOGIN_DISABLED" () {
        
-        chai.request(this.host)
-        .post('/login')
-        .type('json')
-        .send({
-            email: process.env.EMAIL,
-            password: process.env.PASSWORD
-        })
-        .end((error, res) => {
-            // expect(res.body.error).to.not.undefined
-            // expect(res.body.error.code).to.not.undefined
-            // expect(res.body.error.message).to.not.undefined
-            // expect(res.body.error.message).to.equal('EMAIL_NOT_FOUND')
-            // expect(res.body.error.errors).to.not.undefined
-            //expect(res.status).to.be.equal(400)
-            
-            
-            // disabled email login method in firebase console to receive 400
-            expect(res.status).to.be.equal(200)
-        })
+    //     chai.request(this.host)
+    //     .post('/login')
+    //     .type('json')
+    //     .send({
+    //         email: process.env.EMAIL,
+    //         password: process.env.PASSWORD
+    //     })
+    //     .end((error, res) => {
+    //         expect(res.status).to.be.equal(200)
+    //     })
 
-    }
+    // }
 
     @test "POST /login 401 INVALID_EMAIL" () {
        
