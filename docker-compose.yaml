@@ -1,0 +1,17 @@
+version: '3.0'
+
+services:
+    firebase-login:
+      container_name: firebaselogin
+      ports:
+        - 5000:5000
+      build:
+        context: .
+        args:
+          _port: 5000
+          _host: 0.0.0.0
+        # _firebase_port: 
+          _firebase_host: https://www.googleapis.com
+          _api_key: API_KEY_GOES_HERE
+      volumes:
+        - /home/david/dql:/app
