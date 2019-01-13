@@ -4,6 +4,11 @@ import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth'
 import { NextFunction } from 'connect';
 import * as joi from 'joi'
 import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
+import { HttpMethod } from '../src/DQLAuthentication';
+
+const validationMethods: HttpMethod[] = [
+    'POST'
+]
 
 const login: DQLEndpoint = {
 
@@ -44,6 +49,31 @@ const environment =  async function (request: Request , response: Response , nex
             method: request.method,
             statusCode: 500,
             errors: error
+        })
+    }
+
+}
+
+const headers =  async function (request: Request , response: Response , next: NextFunction)  {
+
+    const { error } = joi.object({
+            "content-type" : joi.string().regex(/application\/json/).required()
+        }).validate(request.headers , {
+            abortEarly: false,
+            allowUnknown: true
+        })
+
+
+    if(error === null) {
+        next()
+    } else {
+        response.set('Accept' , 'application/json')
+        response.status(400).send({
+            method: request.method,
+            statusCode: 400,
+            errors: error,
+            headers: request.headers["content-type"],
+            message: 'Request required application/json'
         })
     }
 
@@ -115,11 +145,12 @@ const middleware = async function (request: Request, response: Response) {
 
 }
 
-login.middleware = [
+login.controller = {
     environment,
+    headers,
     validation,
-    middleware
-]
+    post: middleware
+}
 
 export default {
     resourcePath: login.resourcePath,

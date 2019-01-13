@@ -22,22 +22,22 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/137</span>
+        <span class='fraction'>0/149</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/73</span>
+        <span class='fraction'>0/77</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>0/28</span>
+        <span class='fraction'>0/32</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/130</span>
+        <span class='fraction'>0/141</span>
       </div>
     </div>
     <p class="quiet">
@@ -334,7 +334,22 @@
 <a name='L286'></a><a href='#L286'>286</a>
 <a name='L287'></a><a href='#L287'>287</a>
 <a name='L288'></a><a href='#L288'>288</a>
-<a name='L289'></a><a href='#L289'>289</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -532,8 +547,15 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -571,6 +593,14 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -816,16 +846,23 @@ class DQLServer {
             }
 <span class="cstat-no" title="statement not covered" >            response.status(500).send();</span>
         });
+        let handlers = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >        handlers = this.endpoints.getEndpoints().reduce(<span class="fstat-no" title="function not covered" >(h</span>, data) =&gt; {</span>
+            const { controller } = <span class="cstat-no" title="statement not covered" >data.endpoint;</span>
+<span class="cstat-no" title="statement not covered" >            if (controller === undefined)</span>
+<span class="cstat-no" title="statement not covered" >                return h;</span>
+            const _handlers = <span class="cstat-no" title="statement not covered" >Object.keys(controller).filter(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; { <span class="cstat-no" title="statement not covered" >return controller[key] !== undefined; </span>}).map(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                return controller[key];</span>
+            });
+<span class="cstat-no" title="statement not covered" >            return h.concat(_handlers);</span>
+        }, handlers);
+<span class="cstat-no" title="statement not covered" >        this.server.use(handlers);</span>
 <span class="cstat-no" title="statement not covered" >        this.endpoints.getEndpoints().forEach(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (data.endpoint.env !== undefined) {</span>
-<span class="cstat-no" title="statement not covered" >                Object.keys(data.endpoint.env).forEach(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    data.endpoint.env[key] = process.env[key];</span>
-                });
-            }
+<span class="cstat-no" title="statement not covered" >            data = this.mapEnvironmentVariables(data);</span>
             const { resourcePath, endpoint } = <span class="cstat-no" title="statement not covered" >data;</span>
-            const { middleware } = <span class="cstat-no" title="statement not covered" >endpoint;</span>
+            const { middleware, controller } = <span class="cstat-no" title="statement not covered" >endpoint;</span>
             const method = <span class="cstat-no" title="statement not covered" >data.endpoint.method;</span>
-<span class="cstat-no" title="statement not covered" >            if (middleware !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            if (middleware !== undefined &amp;&amp; controller === undefined) {</span>
                 const endpoints = <span class="cstat-no" title="statement not covered" >typeof middleware === 'function' ? [middleware] : middleware;</span>
 <span class="cstat-no" title="statement not covered" >                endpoints.forEach(<span class="fstat-no" title="function not covered" >mw</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                    switch (method) {</span>
@@ -859,6 +896,14 @@ class DQLServer {
 <span class="cstat-no" title="statement not covered" >        this.server.listen(this.port || 3000, this.host || 'localhost', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            console.log('listening');</span>
         });
+    }
+<span class="fstat-no" title="function not covered" >    ma</span>pEnvironmentVariables(data) {
+<span class="cstat-no" title="statement not covered" >        if (data.endpoint.env !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            Object.keys(data.endpoint.env).forEach(<span class="fstat-no" title="function not covered" >ke</span>y =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                data.endpoint.env[key] = process.env[key];</span>
+            });
+        }
+<span class="cstat-no" title="statement not covered" >        return data;</span>
     }
 <span class="fstat-no" title="function not covered" >    ha</span>ndleValidation(request, response, next) {
         const url = <span class="cstat-no" title="statement not covered" >this.convertUrl(request.originalUrl, request.params);</span>
@@ -916,7 +961,7 @@ class DQLServer {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Jan 13 2019 15:22:22 GMT+0100 (CET)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Jan 13 2019 15:47:04 GMT+0100 (CET)
 </div>
 </div>
 <script src="../prettify.js"></script>

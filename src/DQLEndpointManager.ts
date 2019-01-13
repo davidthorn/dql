@@ -22,20 +22,68 @@ export class DQLEndpointManager {
         d.method = method
         switch (method) {
             case 'GET':
-                d.path = `${endpoint.resourcePath}`
+                d.resourcePath = `${endpoint.resourcePath}`
                 break;
             case 'POST':
-                d.path = `${endpoint.resourcePath}`
+                d.resourcePath = `${endpoint.resourcePath}`
                 break;
             default:
-                d.path = `${endpoint.resourcePath}/:id`
+                d.resourcePath = `${endpoint.resourcePath}/:id`
                 break;
         }
 
         return d
     }
 
-    add(name: string, endpoint: DQLEndpoint) {
+    add(name: string, endpoint: DQLEndpoint , skipController: boolean = false) {
+
+        if(endpoint.controller !== undefined && !skipController) {
+
+
+            const { validation, handlesMethod, environment  , headers} = endpoint.controller
+
+            Object.keys(endpoint.controller).forEach(key => {
+                switch(key) {
+                    case 'get':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpoint.controller![key]
+                    }, 'GET'))
+                    break;
+                    case 'post':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: { environment, validation , headers, handlesMethod },
+                        middleware: endpoint.controller![key]
+                    }, 'POST'), true)
+                    break;
+                    case 'patch':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpoint.controller![key]
+                    }, 'PATCH'))
+                    break;
+                    case 'put':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpoint.controller![key]
+                    }, 'PUT'))
+                    break;
+                    case 'delete':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpoint.controller![key]
+                    }, 'DELETE'))
+                    break
+                    default: break
+                }
+            })
+            return
+        }
 
         switch (endpoint.method) {
             case 'REST':
