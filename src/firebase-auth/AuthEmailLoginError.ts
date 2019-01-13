@@ -1,4 +1,4 @@
-export interface AuthEmailLoginError {
+export default interface AuthEmailLoginError {
     error: {
         code: number;
         message: string;
@@ -7,6 +7,5 @@ export interface AuthEmailLoginError {
             domain: string;
             reason: string;
         }[];
-        status: string;
     };
 }

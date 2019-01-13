@@ -2,61 +2,83 @@ import {Response , Request} from 'express'
 import { DQLEndpoint } from '../src/DQLEndpoint'
 import { firebaseSignupEmailPassword } from '../src/firebase-auth'
 import { NextFunction } from 'connect';
+import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
+import * as joi from 'joi'
 
 const register: DQLEndpoint = {
 
     resourcePath: '/register',
-    body : {
-        email: {
-            required: true,
-            type: 'string'
-        },
-        password: {
-            type: 'string',
-            required: true
-        }
-    },
+    body : {},
     method: 'POST',
     middleware: [],
     env: {
-        API_KEY: undefined
+        API_KEY: undefined,
+        FIREBASE_HOST: undefined,
+        FIREBASE_PORT: undefined
     }
 
 }
 
 /**
- * Validates that the API_KEY is set
+ * Validates that the FIREBASE_PORT, FIREBASE_HOST, API_KEY environment variables have been set
+ * and that they are valid to make a request with
  *
  * @param {Request} request
  * @param {Response} response
  * @param {NextFunction} next
  */
-const validateEnvironment = async function (request: Request, response: Response, next: NextFunction)  {
-        
-    if(register.env === undefined) {
+const environment =  async function (request: Request , response: Response , next: NextFunction)  {
+
+    const { error } = joi.object({
+        API_KEY: joi.string().required(),
+        FIREBASE_HOST: joi.string().required(),
+        FIREBASE_PORT: joi.string().allow('').optional()
+    }).validate(register.env , {
+        abortEarly: false
+    })
+
+    if(error === null) {
+        next()
+    } else {
         response.status(500).send({
             method: request.method,
             statusCode: 500,
-            message: 'API_KEY not set in env'
+            errors: error
         })
-        return
     }
-
-    if(register.env.API_KEY === undefined) {
-        response.status(500).send({
-            method: request.method,
-            statusCode: 500,
-            message: 'API_KEY not set in env'
-        })
-        return
-    }
-
-    next()
 
 }
 
-const middleware = async function (request: Request, response: Response, next: NextFunction)  {
-        
+const validation =  async function (request: Request , response: Response , next: NextFunction)  {
+
+    const { error } = joi.object({
+        email: joi.string().email().required(),
+        password: joi.string().min(6).required()
+    }).validate(request.body , {
+        abortEarly: false
+    })
+
+    if(error === null) {
+        next()
+    } else {
+        response.status(400).send({
+            method: request.method,
+            statusCode: 400,
+            errors: error
+        })
+    }
+
+}
+
+
+/**
+ *  Execute the firebaseSignupEmailPassword command to attempt to sign the user up  with email and password
+ *
+ * @param {Request} request
+ * @param {Response} response
+ */
+const middleware = async function (request: Request, response: Response) {
+
     const result = await firebaseSignupEmailPassword({
         credentials: {
             email: request.body.email, 
@@ -64,7 +86,8 @@ const middleware = async function (request: Request, response: Response, next: N
         },
         returnSecureToken: true,
         API_KEY: register.env!.API_KEY!
-    }).catch(error => {
+    }).catch((responseError: any) => {
+        const error = handleFirebaseError(responseError)
         response.status(error.error.code).send(error)
     })
 
@@ -73,7 +96,8 @@ const middleware = async function (request: Request, response: Response, next: N
 }
 
 register.middleware = [
-    validateEnvironment,
+    environment,
+    validation,
     middleware
 ]
 

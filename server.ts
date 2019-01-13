@@ -52,7 +52,11 @@ server.port = parseInt(process.env.PORT || '3000')
 
 console.log({
     host: server.host || 'not set',
-    port: server.port || 'not set'
+    port: server.port || 'not set',
+    firebase: {
+        port: process.env.FIREBASE_PORT,
+        host: process.env.FIREBASE_HOST
+    }
 })
 
 server.listen()       

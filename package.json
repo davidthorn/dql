@@ -35,7 +35,6 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "djt-firebase-auth": "^0.1.0",
     "express": "^4.16.4",
     "lodash.isboolean": "^3.0.3",
     "lodash.isnumber": "^3.0.3",
@@ -44,14 +43,13 @@
     "mocha-typescript": "^1.1.17",
     "npm": "^6.5.0",
     "nyc": "^13.1.0",
-    "source-map-support": "^0.5.9",
+    "source-map-support": "^0.5.10",
     "typescript": "^3.2.2"
   },
   "dependencies": {
     "@types/joi": "^14.0.1",
     "@types/morgan": "^1.7.35",
     "@types/node-fetch": "^2.1.4",
-    "djt-firebase-auth": "^0.3.0",
     "joi": "^14.3.1",
     "joi-date-extensions": "^1.2.0",
     "morgan": "^1.9.1",
