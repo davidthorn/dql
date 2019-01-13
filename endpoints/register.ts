@@ -1,6 +1,6 @@
 import {Response , Request} from 'express'
 import { DQLEndpoint } from '../src/DQLEndpoint'
-import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth'
+import { firebaseAuthLoginEmailPassword, firebaseSignupEmailPassword } from '../src/firebase-auth'
 import { NextFunction } from 'connect';
 import * as joi from 'joi'
 import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
@@ -10,9 +10,9 @@ const validationMethods: HttpMethod[] = [
     'POST'
 ]
 
-const login: DQLEndpoint = {
+const register: DQLEndpoint = {
 
-    resourcePath: '/login',
+    resourcePath: '/register',
     body : {},
     method: 'POST',
     middleware: [],
@@ -38,7 +38,7 @@ const environment =  async function (request: Request , response: Response , nex
         API_KEY: joi.string().required(),
         FIREBASE_HOST: joi.string().required(),
         FIREBASE_PORT: joi.string().allow('').optional()
-    }).validate(login.env , {
+    }).validate(register.env , {
         abortEarly: false
     })
 
@@ -129,13 +129,13 @@ const validation =  async function (request: Request , response: Response , next
  */
 const middleware = async function (request: Request, response: Response) {
 
-    const result = await firebaseAuthLoginEmailPassword({
+    const result = await firebaseSignupEmailPassword({
         credentials: {
             email: request.body.email, 
             password: request.body.password
         },
         returnSecureToken: true,
-        API_KEY: login.env!.API_KEY!
+        API_KEY: register.env!.API_KEY!
     }).catch((responseError: any) => {
         const error = handleFirebaseError(responseError)
         response.status(error.error.code).send(error)
@@ -145,7 +145,7 @@ const middleware = async function (request: Request, response: Response) {
 
 }
 
-login.controller = {
+register.controller = {
     environment,
     headers,
     validation,
@@ -153,6 +153,6 @@ login.controller = {
 }
 
 export default {
-    resourcePath: login.resourcePath,
-    endpoint: login
+    resourcePath: register.resourcePath,
+    endpoint: register
 }
