@@ -1,4 +1,4 @@
-import {Response , Request} from 'express'
+import { Response, Request } from 'express'
 import { DQLEndpoint } from '../src/DQLEndpoint'
 import { firebaseSignupEmailPassword } from '../src/firebase-auth'
 import { NextFunction } from 'connect';
@@ -8,7 +8,7 @@ import * as joi from 'joi'
 const register: DQLEndpoint = {
 
     resourcePath: '/register',
-    body : {},
+    body: {},
     method: 'POST',
     middleware: [],
     env: {
@@ -27,17 +27,17 @@ const register: DQLEndpoint = {
  * @param {Response} response
  * @param {NextFunction} next
  */
-const environment =  async function (request: Request , response: Response , next: NextFunction)  {
+const environment = async function (request: Request, response: Response, next: NextFunction) {
 
     const { error } = joi.object({
         API_KEY: joi.string().required(),
         FIREBASE_HOST: joi.string().required(),
         FIREBASE_PORT: joi.string().allow('').optional()
-    }).validate(register.env , {
+    }).validate(register.env, {
         abortEarly: false
     })
 
-    if(error === null) {
+    if (error === null) {
         next()
     } else {
         response.status(500).send({
@@ -49,16 +49,16 @@ const environment =  async function (request: Request , response: Response , nex
 
 }
 
-const validation =  async function (request: Request , response: Response , next: NextFunction)  {
+const validation = async function (request: Request, response: Response, next: NextFunction) {
 
     const { error } = joi.object({
         email: joi.string().email().required(),
         password: joi.string().min(6).required()
-    }).validate(request.body , {
+    }).validate(request.body, {
         abortEarly: false
     })
 
-    if(error === null) {
+    if (error === null) {
         next()
     } else {
         response.status(400).send({
@@ -81,7 +81,7 @@ const middleware = async function (request: Request, response: Response) {
 
     const result = await firebaseSignupEmailPassword({
         credentials: {
-            email: request.body.email, 
+            email: request.body.email,
             password: request.body.password
         },
         returnSecureToken: true,
