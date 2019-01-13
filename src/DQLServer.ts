@@ -178,7 +178,14 @@ export class DQLServer {
                 const endpoint = this.endpoints.getEndpoint(req.originalUrl)
                 if (endpoint.middleware === undefined) throw new Error()
                 if (req.method !== endpoint.method) throw new Error()
-                endpoint.middleware(req, res, next)
+
+                const endpoints = typeof endpoint.middleware === 'function' ? [endpoint.middleware] : endpoint.middleware 
+
+                endpoints.forEach(middleware => {
+                    middleware(req, res, next)
+                })
+
+               
             } catch (error) {
                 res.status(404).send({
                     statusCode: 404,
@@ -228,31 +235,36 @@ export class DQLServer {
             const { middleware } = endpoint
             const method = data.endpoint.method
             if (middleware !== undefined) {
+                
+                const endpoints = typeof middleware === 'function' ? [middleware] : middleware 
 
-                switch (method) {
-                    case 'GET':
-                        this.server.get(resourcePath, middleware.bind(data.endpoint))
-                        break;
-                    case 'DELETE':
-                        this.server.delete(resourcePath, this.handleValidation.bind(this))
-                        this.server.delete(resourcePath, middleware.bind(data.endpoint))
-                        break;
-                    case 'PATCH':
-                        this.server.patch(resourcePath, this.handleValidation.bind(this))
-                        this.server.patch(resourcePath, middleware.bind(data.endpoint))
-                        break;
-                    case 'PUT':
-                        this.server.put(resourcePath, this.handleValidation.bind(this))
-                        this.server.put(resourcePath, middleware.bind(data.endpoint))
-                        break;
-                    case 'POST':
-                        this.server.post(resourcePath, this.handleValidation.bind(this))
-                        this.server.post(resourcePath, middleware.bind(data.endpoint))
-                        break
-                    case 'HEAD':
-                        this.server.head(resourcePath, middleware.bind(data.endpoint))
-                        break;
-                }
+                endpoints.forEach( mw => {
+                    switch (method) {
+                        case 'GET':
+                            this.server.get(resourcePath, mw.bind(data.endpoint))
+                            break;
+                        case 'DELETE':
+                            this.server.delete(resourcePath, this.handleValidation.bind(this))
+                            this.server.delete(resourcePath, mw.bind(data.endpoint))
+                            break;
+                        case 'PATCH':
+                            this.server.patch(resourcePath, this.handleValidation.bind(this))
+                            this.server.patch(resourcePath, mw.bind(data.endpoint))
+                            break;
+                        case 'PUT':
+                            this.server.put(resourcePath, this.handleValidation.bind(this))
+                            this.server.put(resourcePath, mw.bind(data.endpoint))
+                            break;
+                        case 'POST':
+                            this.server.post(resourcePath, this.handleValidation.bind(this))
+                            this.server.post(resourcePath, mw.bind(data.endpoint))
+                            break
+                        case 'HEAD':
+                            this.server.head(resourcePath, mw.bind(data.endpoint))
+                            break;
+                    }
+                })
+                
             }
         })
 
