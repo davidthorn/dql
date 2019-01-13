@@ -178,13 +178,13 @@ export class DQLServer {
                 if (endpoint.middleware === undefined) throw new Error()
                 if (req.method !== endpoint.method) throw new Error()
 
-                const endpoints = typeof endpoint.middleware === 'function' ? [endpoint.middleware] : endpoint.middleware 
+                const endpoints = typeof endpoint.middleware === 'function' ? [endpoint.middleware] : endpoint.middleware
 
                 endpoints.forEach(middleware => {
                     middleware(req, res, next)
                 })
 
-               
+
             } catch (error) {
                 res.status(404).send({
                     statusCode: 404,
@@ -233,11 +233,11 @@ export class DQLServer {
             const { resourcePath, endpoint } = data
             const { middleware } = endpoint
             const method = data.endpoint.method
-            if (middleware !== undefined ) {
-                
-                const endpoints = typeof middleware === 'function' ? [middleware] : middleware 
+            if (middleware !== undefined) {
 
-                endpoints.forEach( mw => {
+                const endpoints = typeof middleware === 'function' ? [middleware] : middleware
+
+                endpoints.forEach(mw => {
                     switch (method) {
                         case 'GET':
                             this.server.get(resourcePath, mw.bind(data.endpoint))
@@ -263,8 +263,8 @@ export class DQLServer {
                             break;
                     }
                 })
-                
-            } 
+
+            }
         })
 
 
