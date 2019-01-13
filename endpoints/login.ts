@@ -55,21 +55,41 @@ const validation =  async function (request: Request , response: Response , next
         email: joi.string().email().required(),
         password: joi.string().min(6).required()
     }).validate(request.body , {
-        abortEarly: false
+        abortEarly: true
     })
 
     if(error === null) {
         next()
     } else {
+
+        let message = ''
+
+        switch(error.details[0].type) {
+            case 'string.email':
+            message = 'INVALID_EMAIL'
+            break
+            case 'string.min':
+            message = 'INVALID_PASSWORD'
+            break;
+            default: break
+        }
+
         response.status(400).send({
-            method: request.method,
-            statusCode: 400,
-            errors: error
+            error: {
+                message,
+                code: 400,
+                errors: error.details.map(i => {
+                    return {
+                        domain: i.context!.key!,
+                        reason: i.type,
+                        message: message
+                    }
+                })
+            }
         })
     }
 
 }
-
 
 /**
  *  Execute the firebaseAuthLoginEmailPassword command to attempt to sign the user in  with email and password
