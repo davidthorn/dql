@@ -1,5 +1,5 @@
 import { DQLEndpoint } from './DQLEndpoint'
-import DQLEndpointController from './DQLEndpointController';
+import { DQLEndpointController } from './DQLEndpointController';
 import { RequestHandler } from 'express';
 import { HttpMethod } from './DQLAuthentication';
 
@@ -34,40 +34,8 @@ export class DQLEndpointControllerManager {
 
         return endpoints
 
-        // if (middleware !== undefined && controller === undefined) {
-
-        //     endpoints.forEach(mw => {
-        //         switch (method) {
-        //             case 'GET':
-        //                 this.server.get(resourcePath, mw.bind(data.endpoint))
-        //                 break;
-        //             case 'DELETE':
-        //                 this.server.delete(resourcePath, this.handleValidation.bind(this))
-        //                 this.server.delete(resourcePath, mw.bind(data.endpoint))
-        //                 break;
-        //             case 'PATCH':
-        //                 this.server.patch(resourcePath, this.handleValidation.bind(this))
-        //                 this.server.patch(resourcePath, mw.bind(data.endpoint))
-        //                 break;
-        //             case 'PUT':
-        //                 this.server.put(resourcePath, this.handleValidation.bind(this))
-        //                 this.server.put(resourcePath, mw.bind(data.endpoint))
-        //                 break;
-        //             case 'POST':
-        //                 this.server.post(resourcePath, this.handleValidation.bind(this))
-        //                 this.server.post(resourcePath, mw.bind(data.endpoint))
-        //                 break
-        //             case 'HEAD':
-        //                 this.server.head(resourcePath, mw.bind(data.endpoint))
-        //                 break;
-        //         }
-        //     })
-
-        // }
-
-        // return this.endpoint
+      
 
     }
    
-
 } 

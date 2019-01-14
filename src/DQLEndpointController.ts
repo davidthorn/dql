@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { HttpMethod } from "./DQLAuthentication";
 
-export default interface DQLEndpointController {
+export interface DQLEndpointControllerType {
     
     environment?: RequestHandler
 
@@ -85,5 +85,13 @@ export default interface DQLEndpointController {
     put?: RequestHandler
 
     [key:string] : RequestHandler | undefined | any
+
+}
+
+export class DQLEndpointController implements DQLEndpointControllerType {
+
+    constructor() {}
+
+    [key: string] : any
 
 }
