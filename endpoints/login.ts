@@ -1,10 +1,12 @@
-import {Response , Request} from 'express'
-import { DQLEndpoint } from '../src/DQLEndpoint'
-import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth'
-import { NextFunction } from 'connect';
-import * as joi from 'joi'
-import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
+import { NextFunction, Request, Response } from 'express';
+import * as joi from 'joi';
+import { ValidationMiddleware } from '../middlewares';
+import { LoginSchema } from '../schema';
+import { ValidateSchema } from '../schema/Validate.schema';
 import { HttpMethod } from '../src/DQLAuthentication';
+import { DQLEndpoint } from '../src/DQLEndpoint';
+import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth';
+import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
 
 const validationMethods: HttpMethod[] = [
     'POST'
@@ -81,12 +83,7 @@ const headers =  async function (request: Request , response: Response , next: N
 
 const validation =  async function (request: Request , response: Response , next: NextFunction)  {
 
-    const { error } = joi.object({
-        email: joi.string().email().required(),
-        password: joi.string().min(6).required()
-    }).validate(request.body , {
-        abortEarly: true
-    })
+    const { error } = ValidateSchema(LoginSchema , request.body)
 
     if(error === null) {
         next()
@@ -148,7 +145,7 @@ const middleware = async function (request: Request, response: Response) {
 login.controller = {
     environment,
     headers,
-    validation,
+    validation: ValidationMiddleware(LoginSchema),
     post: middleware
 }
 
