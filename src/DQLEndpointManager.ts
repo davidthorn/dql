@@ -83,7 +83,7 @@ export class DQLEndpointManager {
 
         switch(typeof controller) {
             case 'function':
-            return Object.getOwnPropertyNames(controller.prototype)
+            return Object.getOwnPropertyNames((controller as DQLEndpointController ).prototype)
             break;
             case 'object':
             if(controller instanceof DQLEndpointController) {
@@ -108,10 +108,10 @@ export class DQLEndpointManager {
     getControllerPrototype<T extends DQLEndpointController>(controller: T): DQLEndpointController {
         switch(typeof controller) {
             case 'function':
-            return controller.prototype
+            return (controller as DQLEndpointController ).prototype
             case 'object':
             if(controller instanceof DQLEndpointController) {
-                return controller.prototype
+                return (controller as DQLEndpointController).prototype
             } else {
                 return controller
             }
