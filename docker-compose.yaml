@@ -1,14 +1,14 @@
 version: '3.0'
 
 services:
-    firebase-signup:
-      container_name: firebasesignup
+    firebase:
+      container_name: firebase
       ports:
-        - 5001:5000
+        - 5000:5000
       build:
         context: .
         args:
-          _port: 5001
+          _port: 5000
           _host: 0.0.0.0
         # _firebase_port: 
           _firebase_host: https://www.googleapis.com
