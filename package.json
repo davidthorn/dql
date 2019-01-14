@@ -48,10 +48,16 @@
   },
   "dependencies": {
     "@types/joi": "^14.0.1",
+    "@types/jsonwebtoken": "^8.3.0",
+    "@types/moment": "^2.13.0",
+    "@types/moment-timezone": "^0.5.10",
     "@types/morgan": "^1.7.35",
     "@types/node-fetch": "^2.1.4",
     "joi": "^14.3.1",
     "joi-date-extensions": "^1.2.0",
+    "jsonwebtoken": "^8.4.0",
+    "moment": "^2.23.0",
+    "moment-timezone": "^0.5.23",
     "morgan": "^1.9.1",
     "node-fetch": "^2.3.0"
   },
