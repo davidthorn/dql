@@ -163,7 +163,10 @@ class RegisterController extends DQLEndpointController {
             const error = handleFirebaseError(responseError)
             response.status(error.error.code).send(error)
         })
+   
+        response.status(200).send(result)
     }
+
 
 }
 
