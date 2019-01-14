@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { DQLEndpointProperty } from './DQLEndpointProperty';
-import DQLEndpointController from './DQLEndpointController'
+import { DQLEndpointController } from './DQLEndpointController'
 
 export interface DQLEndpointOptions {
     rootDir?: string

@@ -1,8 +1,8 @@
-import e, { Request, Response } from 'express';
+import e, { Request, Response, RequestHandler } from 'express';
 import * as fs from 'fs';
 import morgan from 'morgan';
 import * as path from 'path';
-import { DQLAuthentication } from './DQLAuthentication';
+import { DQLAuthentication, HttpMethod } from './DQLAuthentication';
 import DQLAuthenticationManager from './DQLAuthenticationManager';
 import { DQLEndpoint } from './DQLEndpoint';
 import { DQLEndpointManager } from './DQLEndpointManager';
@@ -184,7 +184,6 @@ export class DQLServer {
                     middleware(req, res, next)
                 })
 
-
             } catch (error) {
                 res.status(404).send({
                     statusCode: 404,
@@ -222,22 +221,49 @@ export class DQLServer {
             response.status(500).send();
         })
 
+        // let handlers: RequestHandler[] = []
+
+        // handlers = this.endpoints.getEndpoints().reduce((h: RequestHandler[] , data: { resourcePath: string, endpoint: DQLEndpoint } ): RequestHandler[] => {
+        
+        //     const { controller } = data.endpoint
+        //     if(controller === undefined) return h
+        //     const _handlers = Object.keys(controller).filter( key => { return controller[key] !== undefined } ).map(key => {
+        //         return controller[key]!
+        //     })
+    
+        //     return h.concat(_handlers)
+
+        // }, handlers)
+
+        // this.server.use(handlers)
+
         this.endpoints.getEndpoints().forEach(data => {
 
-            if (data.endpoint.env !== undefined) {
-                Object.keys(data.endpoint.env).forEach(key => {
-                    data.endpoint.env![key] = process.env[key]
-                })
-            }
+            data = this.mapEnvironmentVariables(data);
 
             const { resourcePath, endpoint } = data
-            const { middleware } = endpoint
+            const { middleware, controller } = endpoint
+            const { validation, environment , headers} = controller || { validation: undefined, environment: undefined , headers: undefined }
             const method = data.endpoint.method
-            if (middleware !== undefined) {
+
+            if (middleware !== undefined ) {
 
                 const endpoints = typeof middleware === 'function' ? [middleware] : middleware
 
                 endpoints.forEach(mw => {
+
+                    if(environment !== undefined) {
+                       this.callMethod(method , resourcePath , environment) 
+                    }
+
+                    if(headers !== undefined) {
+                        this.callMethod(method , resourcePath , headers) 
+                     }
+                    
+                    if(validation !== undefined) {
+                        this.callMethod(method , resourcePath , validation) 
+                    }
+
                     switch (method) {
                         case 'GET':
                             this.server.get(resourcePath, mw.bind(data.endpoint))
@@ -255,7 +281,6 @@ export class DQLServer {
                             this.server.put(resourcePath, mw.bind(data.endpoint))
                             break;
                         case 'POST':
-                            this.server.post(resourcePath, this.handleValidation.bind(this))
                             this.server.post(resourcePath, mw.bind(data.endpoint))
                             break
                         case 'HEAD':
@@ -274,6 +299,38 @@ export class DQLServer {
             console.log('listening')
         })
 
+    }
+
+    private callMethod(method: HttpMethod , path: string , middelware: RequestHandler) {
+        const m = method.toString().toLowerCase()
+        switch(method.toLowerCase().toString()) {
+            case 'delete':
+            this.server.delete(path, middelware)
+            break
+            case 'put':
+            this.server.put(path, middelware)
+            break
+            case 'post':
+            this.server.post(path, middelware)
+            break
+            case 'patch':
+            this.server.patch(path, middelware)
+            break
+            case 'get':
+            this.server.get(path, middelware)
+            break
+
+        }
+    }
+
+    private mapEnvironmentVariables(data: { resourcePath: string; endpoint: DQLEndpoint; }): { resourcePath: string; endpoint: DQLEndpoint; } {
+        if (data.endpoint.env !== undefined) {
+            Object.keys(data.endpoint.env).forEach(key => {
+                data.endpoint.env![key] = process.env[key];
+            });
+        }
+
+        return data
     }
 
     handleValidation(request: Request, response: Response, next: () => void) {

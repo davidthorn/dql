@@ -2,6 +2,7 @@ import { DQLEndpointProperty } from './DQLEndpointProperty';
 import { DQLEndpoint } from './DQLEndpoint';
 import { isBoolean, isNumber,isString } from './PropertyValidators';
 import isboolean from 'lodash.isboolean'
+import { DQLEndpointController, DQLEndpointControllerType } from './DQLEndpointController';
 
 export class DQLEndpointManager {
 
@@ -22,20 +23,39 @@ export class DQLEndpointManager {
         d.method = method
         switch (method) {
             case 'GET':
-                d.path = `${endpoint.resourcePath}`
+                d.resourcePath = `${endpoint.resourcePath}`
                 break;
             case 'POST':
-                d.path = `${endpoint.resourcePath}`
+                d.resourcePath = `${endpoint.resourcePath}`
                 break;
             default:
-                d.path = `${endpoint.resourcePath}/:id`
+                d.resourcePath = `${endpoint.resourcePath}/:id`
                 break;
         }
 
         return d
     }
 
-    add(name: string, endpoint: DQLEndpoint) {
+    /**
+     * Adds the endpoint to the managers endpoints
+     * If skipController is set to true then the controller property 
+     * will not be validated and move straight on to using the middleware
+     * for the method which is declared
+     * If skipController is false then  the controller property will be checkd 
+     * and if not undefined then the addControllerEndpoints method will be called
+     * to add the individual controller methods as endpoints.
+     *
+     * @param {string} name
+     * @param {DQLEndpoint} endpoint
+     * @param {boolean} [skipController=false]
+     * @returns
+     * @memberof DQLEndpointManager
+     */
+    add(name: string, endpoint: DQLEndpoint , skipController: boolean = false) {
+
+        if(endpoint.controller !== undefined && !skipController) {
+            return this.addControllerEndpoints(endpoint, endpoint.controller, name);
+        }
 
         switch (endpoint.method) {
             case 'REST':
@@ -51,10 +71,128 @@ export class DQLEndpointManager {
 
     }
 
+    /**
+     * Returns and array of property names for the controller 
+     *
+     * @template T
+     * @param {T} controller
+     * @returns {string[]}
+     * @memberof DQLEndpointManager
+     */
+    getControllerKeys<T extends DQLEndpointController> (controller: T): string[] {
+
+        switch(typeof controller) {
+            case 'function':
+            return Object.getOwnPropertyNames(controller.prototype)
+            break;
+            case 'object':
+            if(controller instanceof DQLEndpointController) {
+                return Object.getOwnPropertyNames(Object.getPrototypeOf(controller))
+            } else {
+                return Object.keys(controller)
+            }
+            break
+            default: return []
+        }
+        
+    }
+
+    /**
+     * Returns the prototype for the controller
+     *
+     * @template T
+     * @param {T} controller
+     * @returns {DQLEndpointController}
+     * @memberof DQLEndpointManager
+     */
+    getControllerPrototype<T extends DQLEndpointController>(controller: T): DQLEndpointController {
+        switch(typeof controller) {
+            case 'function':
+            return controller.prototype
+            case 'object':
+            if(controller instanceof DQLEndpointController) {
+                return controller.prototype
+            } else {
+                return controller
+            }
+            break
+            default: 
+            throw new Error('not knowing what is going on here')
+        }
+    }
+
+    /**
+     * Method adds an endpoint for all methods in the controller which match HttpMethod
+     *
+     * @param {DQLEndpoint} endpoint
+     * @param {DQLEndpointController} controller
+     * @param {string} name
+     * @memberof DQLEndpointManager
+     */
+    addControllerEndpoints(endpoint: DQLEndpoint, controller: DQLEndpointController, name: string): void {
+        
+        const endpointController = this.getControllerPrototype(controller)
+        const { validation, handlesMethod, environment, headers } = endpointController
+        
+        this.getControllerKeys(controller).forEach(key => {
+            switch (key) {
+                case 'get':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpointController[key]
+                    }, 'GET'));
+                    break;
+                case 'post':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: { environment, validation, headers, handlesMethod },
+                        middleware: endpointController[key]
+                    }, 'POST'), true);
+                    break;
+                case 'patch':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpointController[key]
+                    }, 'PATCH'));
+                    break;
+                case 'put':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpointController[key]
+                    }, 'PUT'));
+                    break;
+                case 'delete':
+                    this.add(name, this.map({
+                        ...endpoint,
+                        controller: undefined,
+                        middleware: endpointController[key]
+                    }, 'DELETE'));
+                    break;
+                default: break;
+            }
+        });
+    }
+
+    /**
+     * Returns true if an endpoint can handle the resource path
+     *
+     * @param {string} resource
+     * @returns {boolean}
+     * @memberof DQLEndpointManager
+     */
     handlesEndpoint(resource: string): boolean {
         return Object.keys(this.data).filter(i => { i === resource }).length === 1
     }
 
+    /**
+     * Returns all endpoints
+     *
+     * @returns {{ resourcePath: string, endpoint: DQLEndpoint }[]}
+     * @memberof DQLEndpointManager
+     */
     getEndpoints(): { resourcePath: string, endpoint: DQLEndpoint }[] {
         return Object.keys(this.data).map(key => {
             return {
@@ -69,7 +207,7 @@ export class DQLEndpointManager {
     }
 
     /**
-     *
+     * Not yet implemented
      *
      * @returns {{ [id: string]: any }}
      * @memberof BodyDQL
