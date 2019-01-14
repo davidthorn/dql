@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as joi from 'joi';
 import { ValidationMiddleware } from '../middlewares';
-import { LoginSchema } from '../schema';
-import { ValidateSchema } from '../schema/Validate.schema';
+import { LoginSchema, LoginErrorMessage, ValidateSchema } from '../schema';
 import { HttpMethod } from '../src/DQLAuthentication';
 import { DQLEndpoint } from '../src/DQLEndpoint';
 import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth';
@@ -145,7 +144,7 @@ const middleware = async function (request: Request, response: Response) {
 login.controller = {
     environment,
     headers,
-    validation: ValidationMiddleware(LoginSchema),
+    validation: ValidationMiddleware(LoginSchema, LoginErrorMessage ),
     post: middleware
 }
 
