@@ -1,5 +1,6 @@
 import joi from 'joi'
 import { DQLErrorMessage } from './index'
+import { mapValidationError } from './mapValidationError';
 
 const LoginSchema: joi.ObjectSchema = joi.object({
     email: joi.string().email().required().label('Email Address'),
@@ -19,20 +20,9 @@ const LoginErrorMessage = (error: joi.ValidationError): DQLErrorMessage => {
         default: break
     }
 
-    return {
-        error: {
-            message,
-            code: 400,
-            errors: error.details.map(i => {
-                return {
-                    domain: i.context!.key!,
-                    reason: i.type,
-                    message: message
-                }
-            })
-        }
-    }
+    return mapValidationError(message, error)
 }
 
-
 export { LoginSchema, LoginErrorMessage }
+
+

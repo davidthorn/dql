@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import * as joi from 'joi';
-import { ValidationMiddleware } from '../middlewares';
-import { LoginSchema, LoginErrorMessage, ValidateSchema } from '../schema';
+import { EnvironmentValidationMiddleware, ValidationMiddleware } from '../middlewares';
+import { LoginErrorMessage, LoginSchema, ValidateSchema } from '../schema';
+import { FirebaseAuthEnvironmentMessage, FirebaseAuthEnvironmentSchema } from '../schema/FirebaseAuthEnvironment.schema';
 import { HttpMethod } from '../src/DQLAuthentication';
 import { DQLEndpoint } from '../src/DQLEndpoint';
 import { firebaseAuthLoginEmailPassword } from '../src/firebase-auth';
@@ -34,25 +35,7 @@ const login: DQLEndpoint = {
  * @param {NextFunction} next
  */
 const environment =  async function (request: Request , response: Response , next: NextFunction)  {
-
-    const { error } = joi.object({
-        API_KEY: joi.string().required(),
-        FIREBASE_HOST: joi.string().required(),
-        FIREBASE_PORT: joi.string().allow('').optional()
-    }).validate(login.env , {
-        abortEarly: false
-    })
-
-    if(error === null) {
-        next()
-    } else {
-        response.status(500).send({
-            method: request.method,
-            statusCode: 500,
-            errors: error
-        })
-    }
-
+    EnvironmentValidationMiddleware(login.env , FirebaseAuthEnvironmentSchema , FirebaseAuthEnvironmentMessage)(request, response, next)
 }
 
 const headers =  async function (request: Request , response: Response , next: NextFunction)  {

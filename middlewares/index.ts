@@ -1,1 +1,1 @@
-export { ValidationMiddleware } from './Validation'
+export { ValidationMiddleware, EnvironmentValidationMiddleware } from './Validation'

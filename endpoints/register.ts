@@ -1,11 +1,15 @@
-import { Response, Request } from 'express'
-import { DQLEndpoint } from '../src/DQLEndpoint'
-import { firebaseAuthLoginEmailPassword, firebaseSignupEmailPassword } from '../src/firebase-auth'
 import { NextFunction } from 'connect';
-import * as joi from 'joi'
-import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
+import { Request, Response } from 'express';
+import * as joi from 'joi';
+import { ValidationMiddleware, EnvironmentValidationMiddleware } from '../middlewares';
+import { LoginErrorMessage, LoginSchema, ValidateSchema } from '../schema';
 import { HttpMethod } from '../src/DQLAuthentication';
+import { DQLEndpoint } from '../src/DQLEndpoint';
 import { DQLEndpointController } from '../src/DQLEndpointController';
+import { firebaseSignupEmailPassword } from '../src/firebase-auth';
+import handleFirebaseError from '../src/firebase-auth/handleFirebaseError';
+import { FirebaseAuthEnvironmentSchema, FirebaseAuthEnvironmentMessage } from '../schema/FirebaseAuthEnvironment.schema';
+import { mapValidationError } from '../schema/mapValidationError';
 
 const validationMethods: HttpMethod[] = [
     'POST'
@@ -40,25 +44,7 @@ class RegisterController extends DQLEndpointController {
      * @param {NextFunction} next
      */
     async environment(request: Request, response: Response, next: NextFunction) {
-
-        const { error } = joi.object({
-            API_KEY: joi.string().required(),
-            FIREBASE_HOST: joi.string().required(),
-            FIREBASE_PORT: joi.string().allow('').optional()
-        }).validate(register.env, {
-            abortEarly: false
-        })
-
-        if (error === null) {
-            next()
-        } else {
-            response.status(500).send({
-                method: request.method,
-                statusCode: 500,
-                errors: error
-            })
-        }
-
+        EnvironmentValidationMiddleware(register.env , FirebaseAuthEnvironmentSchema , FirebaseAuthEnvironmentMessage )(request, response, next)
     }
 
     /**
@@ -103,45 +89,7 @@ class RegisterController extends DQLEndpointController {
      * @memberof RegisterController
      */
     async validation(request: Request, response: Response, next: NextFunction) {
-
-        const { error } = joi.object({
-            email: joi.string().email().required(),
-            password: joi.string().min(6).required()
-        }).validate(request.body, {
-            abortEarly: true
-        })
-
-        if (error === null) {
-            next()
-        } else {
-
-            let message = ''
-
-            switch (error.details[0].type) {
-                case 'string.email':
-                    message = 'INVALID_EMAIL'
-                    break
-                case 'string.min':
-                    message = 'INVALID_PASSWORD'
-                    break;
-                default: break
-            }
-
-            response.status(400).send({
-                error: {
-                    message,
-                    code: 400,
-                    errors: error.details.map(i => {
-                        return {
-                            domain: i.context!.key!,
-                            reason: i.type,
-                            message: message
-                        }
-                    })
-                }
-            })
-        }
-
+        ValidationMiddleware(LoginSchema, LoginErrorMessage)(request, response, next)
     }
 
     /**

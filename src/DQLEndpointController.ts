@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { HttpMethod } from "./DQLAuthentication";
 
 export interface DQLEndpointControllerType {
-    
+
     environment?: RequestHandler
 
     /**
@@ -12,7 +12,7 @@ export interface DQLEndpointControllerType {
      * @memberof EndpointController
      */
     authorization?: RequestHandler
-    
+
     /**
      * Called if the authorization handler called next()
      *
@@ -20,7 +20,7 @@ export interface DQLEndpointControllerType {
      * @memberof EndpointController
      */
     headers?: RequestHandler
-    
+
     /**
      * Called if the headers handler called next()
      *
@@ -60,14 +60,15 @@ export interface DQLEndpointControllerType {
      * @memberof EndpointController
      */
     post?: RequestHandler
-    
+
     /**
      * Called if the request method is PATCH and validation handler called next()
      *
      * @type {RequestHandler}
      * @memberof EndpointController
-     */patch?: RequestHandler
-    
+     */
+    patch?: RequestHandler
+
     /**
      * Called if the request method is DELETE and validation handler called next()
      *
@@ -75,7 +76,7 @@ export interface DQLEndpointControllerType {
      * @memberof EndpointController
      */
     delete?: RequestHandler
-    
+
     /**
      * Called if the request method is PUT and validation handler called next()
      *
@@ -84,14 +85,14 @@ export interface DQLEndpointControllerType {
      */
     put?: RequestHandler
 
-    [key:string] : RequestHandler | undefined | any
+    [key: string]: RequestHandler | undefined | any
 
 }
 
 export class DQLEndpointController implements DQLEndpointControllerType {
 
-    constructor() {}
+    constructor () { }
 
-    [key: string] : any
+    [key: string]: any
 
 }
