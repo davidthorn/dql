@@ -8,8 +8,7 @@ ARG _debug
 
 WORKDIR /app
 
-COPY ./endpoints /app/endpoints
-COPY ./src /app/src
+COPY . .
 
 RUN npm install
 
