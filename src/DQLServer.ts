@@ -1,14 +1,14 @@
-import e, { Request, Response, RequestHandler } from 'express';
+import cors from 'cors';
+import e, { Request, RequestHandler, Response } from 'express';
 import * as fs from 'fs';
 import morgan from 'morgan';
 import * as path from 'path';
+import { dqllog } from '../log';
 import { DQLAuthentication, HttpMethod } from './DQLAuthentication';
 import DQLAuthenticationManager from './DQLAuthenticationManager';
 import { DQLEndpoint } from './DQLEndpoint';
 import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
-import cors from 'cors'
-import { dqllog } from '../log';
 
 export class DQLServer {
 
@@ -115,14 +115,14 @@ export class DQLServer {
      */
     handleMethodNotAllowed(request: Request, response: Response, next: () => void) {
 
-        console.log('handleMethodNotAllowed' , request.params, request.originalUrl)
+        dqllog('handleMethodNotAllowed', { params: request.params, originalUrl: request.originalUrl })
         const url = this.convertUrl(request.originalUrl, request.params)
         fs.appendFileSync(path.join(process.cwd(), 'handleMethodNotAllowed.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
 
         const resources = this.endpoints.getEndpoints().filter(i => {
             const regMatch = i.resourcePath.replace(/:[\w\d]+/, '[^\/]+')
             const match = url.match(new RegExp(regMatch, 'g'))
-            console.log('handleMethodNotAllowed match' , {
+            dqllog('handleMethodNotAllowed match', {
                 match, convertedUrl: url, endpoint: i, regMatch
             })
             if (match === null) return false
@@ -136,13 +136,16 @@ export class DQLServer {
 
             response.set('Allow', methods.map(i => { return i.method }).join(','))
 
-            response.status(405).send({
+            const responseData = {
                 statusCode: 405,
                 message: 'Method Not Allowed',
                 resourcePath: request.originalUrl,
                 method: request.method,
                 methodsAllowed: methods.map(i => { return i.method }),
-            })
+            }
+
+            dqllog('Method Not Allowed', responseData)
+            response.status(405).send(responseData)
         } else {
             // 404
             response.status(404).send({
@@ -208,7 +211,7 @@ export class DQLServer {
      */
     listen() {
 
-        
+
         this.handleLogging()
 
         dqllog('Adding CORS Middlware')
@@ -219,14 +222,14 @@ export class DQLServer {
 
         dqllog('Adding Body urlencoded Parser middleware')
         this.server.use(bodyParser.urlencoded({ extended: true }))
-        
+
         dqllog('Adding Body json Parser middleware')
         this.server.use(bodyParser.json({}))
 
         dqllog('Adding Error Handling middleware')
         this.server.use((error: Error, request: Request, response: Response, next: () => void) => {
             if (error instanceof SyntaxError) {
-                dqllog('Error happened with request' , {
+                dqllog('Error happened with request', {
                     url: request.originalUrl,
                     host: request.hostname,
                     params: request.params,
@@ -247,46 +250,55 @@ export class DQLServer {
 
         this.endpoints.getEndpoints().forEach(data => {
 
+            dqllog('')
+            dqllog('--------------------------------------------------------------------------')
+            dqllog('')
+            dqllog(`Adding Endpoint middlewares: ${data.resourcePath}:${data.endpoint.method}`)
+
+            dqllog('')
+            dqllog('--------------------------------------------------------------------------')
+
             data = this.mapEnvironmentVariables(data);
 
             const { resourcePath, endpoint } = data
             const { middleware, controller } = endpoint
-            const { validation, environment , headers} = controller || { validation: undefined, environment: undefined , headers: undefined }
+            const { validation, environment, headers } = controller || { validation: undefined, environment: undefined, headers: undefined }
             const method = data.endpoint.method
 
-            if (middleware !== undefined ) {
+            if (middleware !== undefined) {
 
                 const endpoints = typeof middleware === 'function' ? [middleware] : middleware
 
                 endpoints.forEach(mw => {
 
-                    if(environment !== undefined) {
-                        
-                       this.callMethod(method , resourcePath , environment) 
+                    if (environment !== undefined) {
+                        dqllog(`Adding Environment middleware: ${data.resourcePath}:${data.endpoint.method}`)
+                        this.callMethod(method, resourcePath, environment)
                     }
 
-                    if(headers !== undefined) {
-                        this.callMethod(method , resourcePath , headers) 
-                     }
-                    
-                    if(validation !== undefined) {
-                        this.callMethod(method , resourcePath , validation) 
+                    if (headers !== undefined) {
+                        dqllog(`Adding Headers middleware: ${data.resourcePath}:${data.endpoint.method}`)
+                        this.callMethod(method, resourcePath, headers)
                     }
+
+                    if (validation !== undefined) {
+                        dqllog(`Adding Validaton middleware: ${data.resourcePath}:${data.endpoint.method}`)
+                        this.callMethod(method, resourcePath, validation)
+                    }
+
+                    dqllog(`Adding ${method} middleware: ${data.resourcePath}:${data.endpoint.method}`)
 
                     switch (method) {
                         case 'GET':
                             this.server.get(resourcePath, mw)
                             break;
                         case 'DELETE':
-                            //this.server.delete(resourcePath, this.handleValidation.bind(this))
                             this.server.delete(resourcePath, mw)
                             break;
                         case 'PATCH':
-                            //this.server.patch(resourcePath, this.handleValidation.bind(this))
                             this.server.patch(resourcePath, mw)
                             break;
                         case 'PUT':
-                            //this.server.put(resourcePath, this.handleValidation.bind(this))
                             this.server.put(resourcePath, mw)
                             break;
                         case 'POST':
@@ -299,6 +311,10 @@ export class DQLServer {
                 })
 
             }
+
+            dqllog('Completed Adding middleware')
+            dqllog('')
+            dqllog('---------------------------')
         })
 
 
@@ -313,32 +329,31 @@ export class DQLServer {
 
     }
 
-    private callMethod(method: HttpMethod , path: string , middelware: RequestHandler) {
+    private callMethod(method: HttpMethod, path: string, middelware: RequestHandler) {
         const m = method.toString().toLowerCase()
-        switch(method.toLowerCase().toString()) {
+        switch (method.toLowerCase().toString()) {
             case 'delete':
-            this.server.delete(path, middelware)
-            break
+                this.server.delete(path, middelware)
+                break
             case 'put':
-            this.server.put(path, middelware)
-            break
+                this.server.put(path, middelware)
+                break
             case 'post':
-            this.server.post(path, middelware)
-            break
+                this.server.post(path, middelware)
+                break
             case 'patch':
-            this.server.patch(path, middelware)
-            break
+                this.server.patch(path, middelware)
+                break
             case 'get':
-            this.server.get(path, middelware)
-            break
-
+                this.server.get(path, middelware)
+                break
         }
     }
 
     private mapEnvironmentVariables(data: { resourcePath: string; endpoint: DQLEndpoint; }): { resourcePath: string; endpoint: DQLEndpoint; } {
         if (data.endpoint.env !== undefined) {
             Object.keys(data.endpoint.env).forEach(key => {
-                dqllog(`Mapping ENV ${key} to endpoint ${data.endpoint.resourcePath}:${data.endpoint.method}`)
+                dqllog(`Mapping ENV ${key} : ${process.env[key]} to endpoint ${data.endpoint.resourcePath}:${data.endpoint.method}`)
                 data.endpoint.env![key] = process.env[key];
             });
         }
@@ -346,47 +361,6 @@ export class DQLServer {
         return data
     }
 
-    handleValidation(request: Request, response: Response, next: () => void) {
-
-        const url = this.convertUrl(request.originalUrl, request.params)
-        fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
-
-        if (!this.endpoints.hasEndpoint(`${url}`)) {
-            return next()
-        }
-
-        const endpoint = this.endpoints.getEndpoints().filter(i => { return i.resourcePath === url && (i.endpoint.method === request.method || i.endpoint.method === 'REST') })
-        fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify(endpoint, null, 2), { encoding: 'utf8' })
-
-        switch (request.method) {
-            case 'DELETE':
-                return next()
-            case 'PATCH':
-                return next()
-            case 'PUT':
-                return next()
-            case 'POST':
-                const errors = this.endpoints.validate({
-                    body: request.body === undefined ? {} : request.body,
-                    originalPath: `${url}|${request.method}`
-                })
-
-                if (errors.length > 0) {
-                    fs.appendFileSync(path.join(process.cwd(), 'handleValidation.log'), JSON.stringify(errors, null, 2), { encoding: 'utf8' })
-                    response.status(400).send({
-                        method: request.method,
-                        statusCode: 400,
-                        message: 'Bad Request',
-                        errors: errors.map(i => { return i.message }),
-                        resourcePath: request.originalUrl
-                    })
-                } else {
-                    return next()
-                }
-                break
-        }
-
-    }
 
     /**
      * Handles the logging of all requests and responses which are produced by the server into the request.log and response.log

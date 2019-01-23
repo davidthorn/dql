@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as joi from 'joi';
+import { dqllog } from '../log';
 import { EnvironmentValidationMiddleware } from '../middlewares';
 import { LoginSchema, ValidateSchema } from '../schema';
 import { FirebaseAuthEnvironmentMessage, FirebaseAuthEnvironmentSchema } from '../schema/FirebaseAuthEnvironment.schema';
@@ -24,6 +25,12 @@ class LoginController extends DQLEndpointController {
 
     async headers(request: Request, response: Response, next: NextFunction) {
 
+        dqllog('Testing Headers Middleware' , {
+            url: request.originalUrl,
+            method: request.method,
+            headers: request.headers
+        })
+
         const { error } = joi.object({
             "content-type": joi.string().regex(/application\/json/).required()
         }).validate(request.headers, {
@@ -36,18 +43,32 @@ class LoginController extends DQLEndpointController {
             next()
         } else {
             response.set('Accept', 'application/json')
-            response.status(400).send({
+
+            const dataResponse = {
                 method: request.method,
                 statusCode: 400,
                 errors: error,
                 headers: request.headers["content-type"],
                 message: 'Request required application/json'
-            })
+            }
+
+            dqllog('Headers Failed: ' , dataResponse)
+
+            response.status(400).send(dataResponse)
         }
 
     }
 
     async validation(request: Request, response: Response, next: NextFunction) {
+
+        dqllog('Validation request.body Middleware' , {
+            url: request.originalUrl,
+            method: request.method,
+            body: {
+                ...request.body,
+                password: '#§$%§$%§%/&/(&/'
+            }
+        })
 
         const { error } = ValidateSchema(LoginSchema, request.body)
 
@@ -67,7 +88,7 @@ class LoginController extends DQLEndpointController {
                 default: break
             }
 
-            response.status(400).send({
+            const responseData = {
                 error: {
                     message,
                     code: 400,
@@ -79,7 +100,11 @@ class LoginController extends DQLEndpointController {
                         }
                     })
                 }
-            })
+            }
+
+            dqllog('Failed:'  , responseData)
+
+            response.status(400).send(responseData)
         }
 
     }
@@ -92,6 +117,15 @@ class LoginController extends DQLEndpointController {
      */
     async post(request: Request, response: Response) {
 
+        dqllog(`Validation ${request.originalUrl} ${request.method} Middleware` , {
+            url: request.originalUrl,
+            method: request.method,
+            body: {
+                ...request.body,
+                password: '#§$%§$%§%/&/(&/'
+            }
+        })
+
         const result = await firebaseAuthLoginEmailPassword({
             credentials: {
                 email: request.body.email,
@@ -101,6 +135,7 @@ class LoginController extends DQLEndpointController {
             API_KEY: login.env!.API_KEY!
         }).catch((responseError: any) => {
             const error = handleFirebaseError(responseError)
+            dqllog('Failed:'  , error)
             response.status(error.error.code).send(error)
         })
 

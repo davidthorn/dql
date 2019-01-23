@@ -1,20 +1,23 @@
-import register from './endpoints/register'
-import login from './endpoints/login'
-import DQLServer from './src/DQLServer'
+import { login } from './endpoints/login';
+import register from './endpoints/register';
+import { dqllog } from './log';
+import DQLServer from './src/DQLServer';
 
 const server = new DQLServer()
 
-server.add(login.resourcePath , login.endpoint)
-server.add(register.resourcePath , register.endpoint)
+server.add(login.resourcePath, login.endpoint)
+server.add(register.resourcePath, register.endpoint)
 server.host = process.env.HOST
-server.port = parseInt(process.env.PORT || '3000') 
+server.port = parseInt(process.env.PORT || '3000')
 
-console.log({
+dqllog('Environment', {
     host: server.host || 'not set',
     port: server.port || 'not set',
     firebase: {
-        port: process.env.FIREBASE_PORT,
-        host: process.env.FIREBASE_HOST
+        DEBUG: process.env.DEBUG,
+        FIREBASE_PORT: process.env.FIREBASE_PORT,
+        FIREBASE_HOST: process.env.FIREBASE_HOST,
+        API_KEY: process.env.API_KEY
     }
 })
 
