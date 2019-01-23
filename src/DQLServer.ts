@@ -7,6 +7,8 @@ import DQLAuthenticationManager from './DQLAuthenticationManager';
 import { DQLEndpoint } from './DQLEndpoint';
 import { DQLEndpointManager } from './DQLEndpointManager';
 import bodyParser = require('body-parser');
+import cors from 'cors'
+import { dqllog } from '../log';
 
 export class DQLServer {
 
@@ -33,7 +35,7 @@ export class DQLServer {
     }
 
     convertUrl(url: string, params: { [id: string]: string }): string {
-
+        url = url.substring(url.length - 1, url.length) === '/' ? url.substring(0, url.length - 1) : url
         let output = url
 
         Object.keys(params).forEach(key => {
@@ -113,12 +115,16 @@ export class DQLServer {
      */
     handleMethodNotAllowed(request: Request, response: Response, next: () => void) {
 
+        console.log('handleMethodNotAllowed' , request.params, request.originalUrl)
         const url = this.convertUrl(request.originalUrl, request.params)
         fs.appendFileSync(path.join(process.cwd(), 'handleMethodNotAllowed.log'), JSON.stringify({ originalUrl: request.originalUrl, _url: url, params: request.params, url: request.url, p: `${url}|${request.method}` }, null, 2), { encoding: 'utf8' })
 
         const resources = this.endpoints.getEndpoints().filter(i => {
             const regMatch = i.resourcePath.replace(/:[\w\d]+/, '[^\/]+')
             const match = url.match(new RegExp(regMatch, 'g'))
+            console.log('handleMethodNotAllowed match' , {
+                match, convertedUrl: url, endpoint: i, regMatch
+            })
             if (match === null) return false
             if (match[0] === url) return true
             return false
@@ -202,13 +208,31 @@ export class DQLServer {
      */
     listen() {
 
+        
         this.handleLogging()
+
+        dqllog('Adding CORS Middlware')
+        this.server.use(cors())
+
+        dqllog('Adding Authentication Manager middleware')
         this.server.use(this.authManager.authenticate.bind(this.authManager))
+
+        dqllog('Adding Body urlencoded Parser middleware')
         this.server.use(bodyParser.urlencoded({ extended: true }))
+        
+        dqllog('Adding Body json Parser middleware')
         this.server.use(bodyParser.json({}))
 
+        dqllog('Adding Error Handling middleware')
         this.server.use((error: Error, request: Request, response: Response, next: () => void) => {
             if (error instanceof SyntaxError) {
+                dqllog('Error happened with request' , {
+                    url: request.originalUrl,
+                    host: request.hostname,
+                    params: request.params,
+                    query: request.query,
+                    body: request.body
+                })
                 response.status(400).send({
                     method: request.method,
                     resourcePath: request.originalUrl,
@@ -220,22 +244,6 @@ export class DQLServer {
 
             response.status(500).send();
         })
-
-        // let handlers: RequestHandler[] = []
-
-        // handlers = this.endpoints.getEndpoints().reduce((h: RequestHandler[] , data: { resourcePath: string, endpoint: DQLEndpoint } ): RequestHandler[] => {
-        
-        //     const { controller } = data.endpoint
-        //     if(controller === undefined) return h
-        //     const _handlers = Object.keys(controller).filter( key => { return controller[key] !== undefined } ).map(key => {
-        //         return controller[key]!
-        //     })
-    
-        //     return h.concat(_handlers)
-
-        // }, handlers)
-
-        // this.server.use(handlers)
 
         this.endpoints.getEndpoints().forEach(data => {
 
@@ -253,6 +261,7 @@ export class DQLServer {
                 endpoints.forEach(mw => {
 
                     if(environment !== undefined) {
+                        
                        this.callMethod(method , resourcePath , environment) 
                     }
 
@@ -266,25 +275,25 @@ export class DQLServer {
 
                     switch (method) {
                         case 'GET':
-                            this.server.get(resourcePath, mw.bind(data.endpoint))
+                            this.server.get(resourcePath, mw)
                             break;
                         case 'DELETE':
-                            this.server.delete(resourcePath, this.handleValidation.bind(this))
-                            this.server.delete(resourcePath, mw.bind(data.endpoint))
+                            //this.server.delete(resourcePath, this.handleValidation.bind(this))
+                            this.server.delete(resourcePath, mw)
                             break;
                         case 'PATCH':
-                            this.server.patch(resourcePath, this.handleValidation.bind(this))
-                            this.server.patch(resourcePath, mw.bind(data.endpoint))
+                            //this.server.patch(resourcePath, this.handleValidation.bind(this))
+                            this.server.patch(resourcePath, mw)
                             break;
                         case 'PUT':
-                            this.server.put(resourcePath, this.handleValidation.bind(this))
-                            this.server.put(resourcePath, mw.bind(data.endpoint))
+                            //this.server.put(resourcePath, this.handleValidation.bind(this))
+                            this.server.put(resourcePath, mw)
                             break;
                         case 'POST':
-                            this.server.post(resourcePath, mw.bind(data.endpoint))
+                            this.server.post(resourcePath, mw)
                             break
                         case 'HEAD':
-                            this.server.head(resourcePath, mw.bind(data.endpoint))
+                            this.server.head(resourcePath, mw)
                             break;
                     }
                 })
@@ -296,7 +305,10 @@ export class DQLServer {
         this.server.use(this.handleMethodNotAllowed.bind(this))
 
         this.server.listen(this.port || 3000, this.host || 'localhost', () => {
-            console.log('listening')
+            dqllog('Listening', {
+                host: this.host,
+                port: this.port
+            })
         })
 
     }
@@ -326,6 +338,7 @@ export class DQLServer {
     private mapEnvironmentVariables(data: { resourcePath: string; endpoint: DQLEndpoint; }): { resourcePath: string; endpoint: DQLEndpoint; } {
         if (data.endpoint.env !== undefined) {
             Object.keys(data.endpoint.env).forEach(key => {
+                dqllog(`Mapping ENV ${key} to endpoint ${data.endpoint.resourcePath}:${data.endpoint.method}`)
                 data.endpoint.env![key] = process.env[key];
             });
         }

@@ -1,8 +1,8 @@
 version: '3.0'
 
 services:
-    firebase:
-      container_name: firebase
+    dql-server:
+      container_name: dql-server
       ports:
         - 5000:5000
       build:
@@ -13,5 +13,6 @@ services:
         # _firebase_port: 
           _firebase_host: https://www.googleapis.com
           _api_key: FIREBASE_API_KEY_GOES_HERE
+          _debug: 'dev'
       volumes:
         - /home/david/dql:/app
