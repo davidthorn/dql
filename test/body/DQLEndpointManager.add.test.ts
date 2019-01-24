@@ -23,15 +23,14 @@ export class DQLEndpointManagerUnitTest extends DQLEndpointManager<DQLEndpointCo
 
     @test "add GET method on controller" () {
        
+        class LoginController extends DQLEndpointController {
+            get(){}
+        }
+
         this.add( '/login' , {
             method: 'POST',
             body: {},
-            controller: {
-                get: () => { },
-                handlesMethod(method: HttpMethod) {
-                    return true
-                }
-            },
+            controller: new LoginController,
             resourcePath: '/login'
         } )
 
