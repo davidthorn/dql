@@ -1,9 +1,10 @@
 /// <reference path='../../node_modules/mocha-typescript/globals.d.ts'/>
 import { DQLEndpointManager } from "../../src/DQLEndpointManager";
 import { expect } from 'chai'
+import { DQLEndpointController } from "../../src/DQLEndpointController";
 
 @suite('DQLEndpointManager')
-export class DQLEndpointManagerUnitTest extends DQLEndpointManager {
+export class DQLEndpointManagerUnitTest extends DQLEndpointManager<DQLEndpointController> {
 
     @test "loadFile returns an object" () {
         const data = this.loadFile()
